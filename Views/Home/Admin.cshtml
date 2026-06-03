@@ -1,0 +1,905 @@
+﻿@using ARInteriorDesignApp.Models
+
+@{
+    var recentDesigns = ViewBag.RecentDesigns as List<RoomDesign> ?? new List<RoomDesign>();
+    var recentMessages = ViewBag.RecentMessages as List<ContactMessage> ?? new List<ContactMessage>();
+}
+
+<style>
+    .final-admin-page {
+        min-height: 100vh;
+        background: #f2eee7;
+        display: flex;
+        font-family: Arial, sans-serif;
+        color: #20242a;
+    }
+
+    .final-admin-sidebar {
+        width: 260px;
+        min-height: 100vh;
+        background: #20242a;
+        padding: 30px 22px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        box-shadow: 10px 0 30px rgba(0,0,0,0.12);
+    }
+
+    .final-admin-sidebar h2 {
+        color: white;
+        font-size: 30px;
+        font-weight: 900;
+        margin-bottom: 6px;
+    }
+
+    .final-admin-sidebar p {
+        color: #aeb6bf;
+        font-size: 13px;
+        margin-bottom: 30px;
+    }
+
+    .final-admin-sidebar a {
+        display: block;
+        color: #c8d0d8;
+        text-decoration: none;
+        padding: 13px 16px;
+        border-radius: 14px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .final-admin-sidebar a:hover,
+    .final-admin-sidebar a.active {
+        background: #ff7900;
+        color: white;
+        box-shadow: 0 12px 22px rgba(255,121,0,0.25);
+    }
+
+    .final-admin-main {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 32px;
+    }
+
+    .final-admin-header {
+        background: #fffaf3;
+        border: 1px solid #e4d8c8;
+        border-radius: 24px;
+        padding: 26px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 14px 34px rgba(32,36,42,0.06);
+        margin-bottom: 24px;
+    }
+
+    .final-admin-header h1 {
+        font-size: 34px;
+        font-weight: 900;
+        margin: 0 0 6px;
+        color: #20242a;
+    }
+
+    .final-admin-header p {
+        color: #6c747d;
+        margin: 0;
+        font-size: 15px;
+    }
+
+    .final-admin-btn {
+        background: #ff7900;
+        color: white;
+        text-decoration: none;
+        border-radius: 14px;
+        padding: 12px 22px;
+        font-weight: 900;
+        display: inline-block;
+        border: none;
+        box-shadow: 0 12px 24px rgba(255,121,0,0.22);
+    }
+
+    .final-admin-btn:hover {
+        color: white;
+        background: #e86f00;
+    }
+
+    .final-admin-dark-btn {
+        background: #20242a;
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 900;
+        display: inline-block;
+    }
+
+    .final-admin-dark-btn:hover {
+        color: white;
+        background: #ff7900;
+    }
+
+    .final-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .final-stat-card {
+        background: #fffaf3;
+        border: 1px solid #e4d8c8;
+        border-radius: 22px;
+        padding: 22px;
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        box-shadow: 0 12px 30px rgba(32,36,42,0.05);
+    }
+
+    .final-stat-icon {
+        width: 50px;
+        height: 50px;
+        background: #fff0df;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .final-stat-card h3 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 900;
+        color: #20242a;
+    }
+
+    .final-stat-card h6 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 900;
+        color: #20242a;
+    }
+
+    .final-stat-card small {
+        color: #b45f07;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .final-admin-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 22px;
+        align-items: start;
+    }
+
+    .final-admin-panel {
+        background: #fffaf3;
+        border: 1px solid #e4d8c8;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 14px 34px rgba(32,36,42,0.06);
+    }
+
+    .final-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        border-bottom: 1px solid #eadfce;
+        padding-bottom: 16px;
+        margin-bottom: 18px;
+    }
+
+    .final-panel-head h4 {
+        margin: 0 0 5px;
+        font-size: 24px;
+        font-weight: 900;
+        color: #20242a;
+    }
+
+    .final-panel-head p {
+        margin: 0;
+        color: #6c747d;
+        font-size: 14px;
+    }
+
+    .final-design-list {
+        display: grid;
+        gap: 14px;
+        max-height: 560px;
+        overflow-y: auto;
+        padding-right: 6px;
+    }
+
+    .final-design-item {
+        display: grid;
+        grid-template-columns: 140px 1fr auto;
+        gap: 16px;
+        align-items: center;
+        background: #f5ede3;
+        border: 1px solid #e0d1be;
+        border-radius: 18px;
+        padding: 14px;
+    }
+
+    .final-design-item:hover {
+        border-color: #ceb79c;
+        box-shadow: 0 14px 28px rgba(32,36,42,0.07);
+    }
+
+    .final-design-thumb {
+        width: 140px;
+        height: 88px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #dfd0be;
+        border: 1px solid #d8c8b5;
+    }
+
+    .final-design-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .final-badge {
+        display: inline-block;
+        background: #fff0df;
+        color: #b45f07;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+        margin-bottom: 8px;
+    }
+
+    .final-design-info h5 {
+        margin: 0 0 5px;
+        font-size: 18px;
+        font-weight: 900;
+        color: #20242a;
+    }
+
+    .final-design-info p {
+        margin: 0 0 4px;
+        font-size: 14px;
+        color: #535d66;
+    }
+
+    .final-design-info small {
+        color: #7a838c;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .final-side-panels {
+        display: grid;
+        gap: 22px;
+    }
+
+    .final-action-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .final-action-list a {
+        background: #f5ede3;
+        border: 1px solid #e0d1be;
+        border-radius: 16px;
+        padding: 15px;
+        text-decoration: none;
+        color: #20242a;
+        font-weight: 900;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .final-action-list a span {
+        width: 30px;
+        height: 30px;
+        background: white;
+        color: #ff7900;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .final-action-list a:hover {
+        background: #ff7900;
+        color: white;
+    }
+
+    .final-status-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .final-status-list div {
+        background: #f5ede3;
+        border: 1px solid #e0d1be;
+        border-radius: 16px;
+        padding: 14px;
+        font-weight: 800;
+        color: #20242a;
+    }
+
+    .final-status-list span {
+        color: #2f9a42;
+        font-weight: 900;
+        margin-right: 8px;
+    }
+
+    .final-bottom-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 22px;
+        margin-top: 22px;
+    }
+
+    .final-activity-list,
+    .final-message-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .final-activity-item,
+    .final-message-item {
+        background: #f5ede3;
+        border: 1px solid #e0d1be;
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .final-activity-item {
+        display: flex;
+        gap: 12px;
+    }
+
+    .final-activity-icon {
+        width: 42px;
+        height: 42px;
+        background: #fff0df;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .final-activity-item h6,
+    .final-message-item h6 {
+        margin: 0 0 4px;
+        font-size: 14px;
+        font-weight: 900;
+        color: #20242a;
+    }
+
+    .final-activity-item small,
+    .final-message-item small {
+        color: #7a838c;
+        font-size: 12px;
+    }
+
+    .final-message-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+
+    .final-date {
+        background: #fff0df;
+        color: #b45f07;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    .final-message-item p {
+        font-size: 13px;
+        color: #535d66;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .final-empty {
+        background: #f5ede3;
+        border: 1px solid #e0d1be;
+        border-radius: 18px;
+        padding: 26px;
+        text-align: center;
+    }
+
+    .final-empty h5 {
+        color: #20242a;
+        font-weight: 900;
+    }
+
+    .final-empty p {
+        color: #6c747d;
+        margin-bottom: 14px;
+    }
+    /* FINAL COMPACT ADMIN DASHBOARD FIX */
+
+    .final-admin-main {
+        padding: 24px !important;
+    }
+
+    .final-admin-header {
+        padding: 20px 22px !important;
+        margin-bottom: 18px !important;
+        border-radius: 20px !important;
+    }
+
+        .final-admin-header h1 {
+            font-size: 30px !important;
+        }
+
+        .final-admin-header p {
+            font-size: 14px !important;
+        }
+
+    .final-stats-grid {
+        gap: 14px !important;
+        margin-bottom: 18px !important;
+    }
+
+    .final-stat-card {
+        padding: 16px !important;
+        border-radius: 18px !important;
+        min-height: 110px !important;
+    }
+
+    .final-stat-icon {
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 20px !important;
+        border-radius: 13px !important;
+    }
+
+    .final-stat-card h3 {
+        font-size: 26px !important;
+    }
+
+    .final-stat-card h6 {
+        font-size: 14px !important;
+    }
+
+    .final-stat-card small {
+        font-size: 11px !important;
+    }
+
+    .final-admin-grid {
+        grid-template-columns: 1.7fr 0.9fr !important;
+        gap: 18px !important;
+    }
+
+    .final-bottom-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 18px !important;
+        margin-top: 18px !important;
+    }
+
+    .final-admin-panel {
+        padding: 20px !important;
+        border-radius: 20px !important;
+    }
+
+    .final-panel-head {
+        padding-bottom: 12px !important;
+        margin-bottom: 14px !important;
+    }
+
+        .final-panel-head h4 {
+            font-size: 21px !important;
+        }
+
+        .final-panel-head p {
+            font-size: 13px !important;
+        }
+
+    .final-admin-btn {
+        padding: 10px 18px !important;
+        border-radius: 12px !important;
+        font-size: 14px !important;
+    }
+
+    .final-side-panels {
+        gap: 18px !important;
+    }
+
+    .final-design-list {
+        gap: 10px !important;
+        max-height: 390px !important;
+        overflow-y: auto !important;
+    }
+
+    .final-design-item {
+        grid-template-columns: 115px 1fr 70px !important;
+        gap: 12px !important;
+        padding: 10px !important;
+        border-radius: 15px !important;
+    }
+
+    .final-design-thumb {
+        width: 115px !important;
+        height: 72px !important;
+        border-radius: 12px !important;
+    }
+
+    .final-badge {
+        font-size: 10px !important;
+        padding: 4px 8px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .final-design-info h5 {
+        font-size: 15px !important;
+        margin-bottom: 3px !important;
+    }
+
+    .final-design-info p {
+        font-size: 12px !important;
+        margin-bottom: 2px !important;
+    }
+
+    .final-design-info small {
+        font-size: 11px !important;
+    }
+
+    .final-admin-dark-btn {
+        padding: 7px 13px !important;
+        border-radius: 10px !important;
+        font-size: 12px !important;
+    }
+
+    .final-action-list {
+        gap: 9px !important;
+    }
+
+        .final-action-list a {
+            padding: 11px 13px !important;
+            border-radius: 13px !important;
+            font-size: 13px !important;
+        }
+
+            .final-action-list a span {
+                width: 26px !important;
+                height: 26px !important;
+                font-size: 13px !important;
+            }
+
+    .final-status-list {
+        gap: 9px !important;
+    }
+
+        .final-status-list div {
+            padding: 10px 12px !important;
+            border-radius: 13px !important;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+        }
+
+    .final-activity-list,
+    .final-message-list {
+        gap: 9px !important;
+    }
+
+    .final-activity-item,
+    .final-message-item {
+        padding: 11px 12px !important;
+        border-radius: 14px !important;
+    }
+
+    .final-activity-icon {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 11px !important;
+    }
+
+    .final-activity-item h6,
+    .final-message-item h6 {
+        font-size: 13px !important;
+    }
+
+    .final-activity-item small,
+    .final-message-item small {
+        font-size: 11px !important;
+    }
+
+    .final-message-item p {
+        font-size: 12px !important;
+    }
+
+    .final-date {
+        font-size: 10px !important;
+        padding: 4px 8px !important;
+    }
+
+    .final-empty {
+        padding: 20px !important;
+        border-radius: 16px !important;
+    }
+
+        .final-empty h5 {
+            font-size: 17px !important;
+        }
+
+        .final-empty p {
+            font-size: 13px !important;
+        }
+
+    @@media screen and (max-width: 1200px) {
+        .final-admin-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        .final-bottom-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        .final-design-list {
+            max-height: none !important;
+        }
+    }
+
+    @@media screen and (max-width: 900px) {
+        .final-admin-main {
+            padding: 16px !important;
+        }
+
+        .final-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        .final-design-item {
+            grid-template-columns: 1fr !important;
+        }
+
+        .final-design-thumb {
+            width: 100% !important;
+            height: 170px !important;
+        }
+    }
+
+    @@media screen and (max-width: 600px) {
+        .final-stats-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+
+<div class="final-admin-page">
+
+    <aside class="final-admin-sidebar">
+        <h2>AR Interior</h2>
+        <p>Professional Admin Portal</p>
+
+        <a class="active" href="/Home/Admin">Dashboard</a>
+        <a href="/Home/Furniture">Furniture</a>
+        <a href="/Home/ARView">AR Studio</a>
+        <a href="#savedDesigns">Saved Designs</a>
+        <a href="#messages">Messages</a>
+        <a href="/Home/Index">Back to Website</a>
+    </aside>
+
+    <main class="final-admin-main">
+
+        <div class="final-admin-header">
+            <div>
+                <h1>Dashboard Overview</h1>
+                <p>Manage saved room designs, furniture records and system activity.</p>
+            </div>
+
+            <a href="/Home/ARView" class="final-admin-btn">Open AR Studio</a>
+        </div>
+
+        <section class="final-stats-grid">
+            <div class="final-stat-card">
+                <div class="final-stat-icon">🛋</div>
+                <div>
+                    <h3>@(ViewBag.TotalFurniture ?? 0)</h3>
+                    <h6>Total Furniture</h6>
+                    <small>Database records</small>
+                </div>
+            </div>
+
+            <div class="final-stat-card">
+                <div class="final-stat-icon">👥</div>
+                <div>
+                    <h3>@(ViewBag.TotalUsers ?? 0)</h3>
+                    <h6>Total Users</h6>
+                    <small>Registered accounts</small>
+                </div>
+            </div>
+
+            <div class="final-stat-card">
+                <div class="final-stat-icon">🖼</div>
+                <div>
+                    <h3>@(ViewBag.TotalUploads ?? 0)</h3>
+                    <h6>Saved Designs</h6>
+                    <small>AR room previews</small>
+                </div>
+            </div>
+
+            <div class="final-stat-card">
+                <div class="final-stat-icon">✉</div>
+                <div>
+                    <h3>@(ViewBag.TotalMessages ?? 0)</h3>
+                    <h6>Messages</h6>
+                    <small>Contact requests</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="final-admin-grid">
+
+            <div class="final-admin-panel" id="savedDesigns">
+                <div class="final-panel-head">
+                    <div>
+                        <h4>Saved Room Designs</h4>
+                        <p>Recent AR room designs saved in the system.</p>
+                    </div>
+
+                    <a href="/Home/ARView" class="final-admin-btn">Create Design</a>
+                </div>
+
+                @if (recentDesigns.Any())
+                {
+                    <div class="final-design-list">
+                        @foreach (var design in recentDesigns)
+                        {
+                            <div class="final-design-item">
+                                <div class="final-design-thumb">
+                                    <img src="@design.RoomImagePath" alt="Saved Room Design" />
+                                </div>
+
+                                <div class="final-design-info">
+                                    <span class="final-badge">AR Room Design</span>
+                                    <h5>@design.SelectedFurnitureName</h5>
+                                    <p>Saved by <strong>@design.UserName</strong></p>
+                                    <small>@design.CreatedAt.ToString("dd MMM yyyy") • @design.CreatedAt.ToString("hh:mm tt")</small>
+                                </div>
+
+                                <div>
+                                    <a href="@design.RoomImagePath" target="_blank" class="final-admin-dark-btn">View</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="final-empty">
+                        <h5>No saved designs yet</h5>
+                        <p>Create and save a design from the AR Studio to see it here.</p>
+                        <a href="/Home/ARView" class="final-admin-btn">Create Design</a>
+                    </div>
+                }
+            </div>
+
+            <div class="final-side-panels">
+
+                <div class="final-admin-panel">
+                    <div class="final-panel-head">
+                        <div>
+                            <h4>Quick Actions</h4>
+                            <p>Useful admin shortcuts.</p>
+                        </div>
+                    </div>
+
+                    <div class="final-action-list">
+                        <a href="/Home/Furniture">Manage Furniture Collection <span>→</span></a>
+                        <a href="/Home/ARView">Open AR Room Studio <span>→</span></a>
+                        <a href="#savedDesigns">Review Saved Designs <span>→</span></a>
+                        <a href="#messages">View Recent Messages <span>→</span></a>
+                    </div>
+                </div>
+
+                <div class="final-admin-panel">
+                    <div class="final-panel-head">
+                        <div>
+                            <h4>System Status</h4>
+                            <p>Current module status.</p>
+                        </div>
+                    </div>
+
+                    <div class="final-status-list">
+                        <div><span>✓</span> AR preview module active</div>
+                        <div><span>✓</span> Camera capture enabled</div>
+                        <div><span>✓</span> Design download enabled</div>
+                        <div><span>✓</span> Database save enabled</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="final-bottom-grid" id="messages">
+
+            <div class="final-admin-panel">
+                <div class="final-panel-head">
+                    <div>
+                        <h4>Recent Activity</h4>
+                        <p>Latest room design activity.</p>
+                    </div>
+                </div>
+
+                @if (recentDesigns.Any())
+                {
+                    <div class="final-activity-list">
+                        @foreach (var design in recentDesigns.Take(4))
+                        {
+                            <div class="final-activity-item">
+                                <div class="final-activity-icon">🖼</div>
+
+                                <div>
+                                    <h6>@design.SelectedFurnitureName saved successfully</h6>
+                                    <small>@design.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="final-empty">
+                        <h5>No activity yet</h5>
+                        <p>Saved design activity will appear here.</p>
+                    </div>
+                }
+            </div>
+
+            <div class="final-admin-panel">
+                <div class="final-panel-head">
+                    <div>
+                        <h4>Recent Messages</h4>
+                        <p>Latest contact messages.</p>
+                    </div>
+                </div>
+
+                @if (recentMessages.Any())
+                {
+                    <div class="final-message-list">
+                        @foreach (var message in recentMessages)
+                        {
+                            <div class="final-message-item">
+                                <div class="final-message-top">
+                                    <div>
+                                        <h6>@message.Name</h6>
+                                        <small>@message.Email</small>
+                                    </div>
+
+                                    <span class="final-date">@message.CreatedAt.ToString("dd MMM yyyy")</span>
+                                </div>
+
+                                <p>@message.Message</p>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="final-empty">
+                        <h5>No messages yet</h5>
+                        <p>Contact form messages will appear here.</p>
+                    </div>
+                }
+            </div>
+
+        </section>
+
+    </main>
+
+</div>

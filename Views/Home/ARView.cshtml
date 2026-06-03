@@ -1,0 +1,2732 @@
+﻿@{
+    bool isLoggedIn = ViewBag.IsLoggedIn != null && (bool)ViewBag.IsLoggedIn;
+    string userName = ViewBag.UserName as string ?? "";
+}
+
+<input type="hidden" id="loginStateValue" value="@(isLoggedIn ? "true" : "false")" />
+
+<style>
+    :root {
+        --orange: #ff7900;
+        --dark: #1f252c;
+        --muted: #6b7280;
+        --soft: #fff7ef;
+        --border: #ead8c2;
+    }
+
+    .ar-page {
+        background: linear-gradient(135deg, #fffaf4, #f3ede6);
+        min-height: 100vh;
+        padding: 30px 0 55px;
+        font-family: Arial, sans-serif;
+    }
+
+    .ar-container {
+        width: min(1220px, 94%);
+        margin: auto;
+    }
+
+    .ar-hero {
+        background: linear-gradient(135deg, #1f252c, #35312c);
+        color: white;
+        border-radius: 28px;
+        padding: 34px;
+        margin-bottom: 22px;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.22);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .ar-hero::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            background: rgba(255,121,0,0.22);
+            border-radius: 50%;
+            right: -90px;
+            top: -90px;
+        }
+
+        .ar-hero h1 {
+            font-size: 34px;
+            font-weight: 900;
+            margin: 0 0 8px;
+        }
+
+        .ar-hero p {
+            max-width: 760px;
+            color: #f3e3d4;
+            margin: 0;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+    .mode-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+
+    .mode-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 18px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.07);
+    }
+
+        .mode-card.active {
+            border: 2px solid var(--orange);
+            background: #fff8ef;
+        }
+
+        .mode-card h4 {
+            font-size: 17px;
+            color: var(--dark);
+            font-weight: 900;
+            margin: 0 0 6px;
+        }
+
+        .mode-card p {
+            font-size: 13px;
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.45;
+        }
+
+    .studio-grid {
+        display: grid;
+        grid-template-columns: 360px 1fr;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .panel {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 14px 38px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .panel-head {
+        padding: 18px 20px;
+        background: #fff7ef;
+        border-bottom: 1px solid var(--border);
+    }
+
+        .panel-head h3 {
+            color: var(--dark);
+            font-size: 18px;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .panel-head p {
+            color: var(--muted);
+            margin: 5px 0 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+    .panel-body {
+        padding: 18px;
+    }
+
+    .btn-orange {
+        background: var(--orange);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        padding: 11px 14px;
+        font-weight: 900;
+        width: 100%;
+        transition: 0.2s;
+    }
+
+        .btn-orange:hover {
+            background: #e66f00;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+    .btn-dark-soft {
+        background: var(--dark);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        padding: 11px 14px;
+        font-weight: 900;
+        width: 100%;
+    }
+
+    .btn-outline-soft {
+        background: white;
+        border: 1px solid var(--border);
+        color: var(--dark);
+        border-radius: 14px;
+        padding: 10px 14px;
+        font-weight: 900;
+        width: 100%;
+    }
+
+    .camera-box {
+        background: #15191f;
+        border-radius: 18px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        min-height: 190px;
+        display: grid;
+        place-items: center;
+        color: white;
+        position: relative;
+    }
+
+    #cameraVideo {
+        width: 100%;
+        height: 230px;
+        object-fit: cover;
+        display: none;
+    }
+
+    .camera-placeholder {
+        color: #e9d4bd;
+        padding: 18px;
+        text-align: center;
+        font-weight: 800;
+        line-height: 1.5;
+    }
+
+    .upload-box {
+        border: 2px dashed #e6c6a2;
+        background: #fffaf4;
+        border-radius: 18px;
+        padding: 16px;
+        text-align: center;
+        margin: 14px 0;
+    }
+
+        .upload-box input {
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+    .hint {
+        background: #f7fbff;
+        border: 1px solid #d8e8f5;
+        color: #3c5870;
+        border-radius: 16px;
+        padding: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-top: 12px;
+        font-weight: 700;
+    }
+
+    .library-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-height: 430px;
+        overflow-y: auto;
+        padding-right: 4px;
+    }
+
+    .furniture-card {
+        border: 1px solid var(--border);
+        background: #fffdf9;
+        border-radius: 16px;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.18s;
+    }
+
+        .furniture-card:hover {
+            border-color: var(--orange);
+            background: #fff4e7;
+            transform: translateY(-2px);
+        }
+
+        .furniture-card img {
+            width: 100%;
+            height: 72px;
+            object-fit: contain;
+            filter: drop-shadow(0 8px 8px rgba(0,0,0,0.13));
+        }
+
+        .furniture-card span {
+            display: block;
+            color: var(--dark);
+            font-size: 12px;
+            font-weight: 900;
+            margin-top: 6px;
+        }
+
+    .workspace-panel {
+        min-height: 760px;
+    }
+
+    .workspace-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 18px 20px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--border);
+    }
+
+        .workspace-head h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--dark);
+        }
+
+    .workspace-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .small-btn {
+        border: 1px solid var(--border);
+        background: #fff8ef;
+        color: var(--dark);
+        border-radius: 12px;
+        padding: 8px 11px;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+        .small-btn.orange {
+            background: var(--orange);
+            color: white;
+            border-color: var(--orange);
+        }
+
+    .room-stage-wrap {
+        padding: 18px;
+        background: #faf6ef;
+    }
+
+    .room-stage {
+        width: 100%;
+        height: 610px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #e7ded1, #cdb99c);
+        border: 2px solid #e2cfb8;
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.45);
+        user-select: none;
+        touch-action: none;
+    }
+
+    .room-empty {
+        text-align: center;
+        color: #594f43;
+        padding: 25px;
+        font-weight: 900;
+        line-height: 1.6;
+        max-width: 520px;
+    }
+
+    .room-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #eee6dc;
+        z-index: 1;
+    }
+
+    .placed-item {
+        position: absolute;
+        left: 40%;
+        top: 52%;
+        width: 190px;
+        height: auto;
+        z-index: 5;
+        cursor: move;
+        touch-action: none;
+        transform-origin: center center;
+    }
+
+        .placed-item.selected {
+            outline: 2px dashed var(--orange);
+            outline-offset: 5px;
+            border-radius: 10px;
+        }
+
+        .placed-item img {
+            width: 100%;
+            display: block;
+            pointer-events: none;
+            filter: drop-shadow(0 16px 14px rgba(0,0,0,0.22));
+        }
+
+    .item-tag {
+        position: absolute;
+        left: 50%;
+        bottom: -30px;
+        transform: translateX(-50%);
+        background: rgba(31,37,44,0.88);
+        color: white;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+        padding: 5px 9px;
+        white-space: nowrap;
+        display: none;
+    }
+
+    .placed-item.selected .item-tag {
+        display: block;
+    }
+
+    .controls-bar {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .control-btn {
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--dark);
+        border-radius: 14px;
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+        .control-btn.danger {
+            background: #fff1f1;
+            color: #b91c1c;
+            border-color: #ffd4d4;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+    .status-line {
+        margin-top: 12px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 11px 12px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .login-note {
+        background: #fff4e6;
+        border: 1px solid #ffd1a3;
+        color: #7a3d00;
+        border-radius: 14px;
+        padding: 12px;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .hidden-canvas {
+        display: none;
+    }
+
+
+    .ai-chat-section {
+        margin-top: 22px;
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: 0 14px 38px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .ai-chat-grid {
+        display: grid;
+        grid-template-columns: 330px 1fr;
+        gap: 0;
+    }
+
+    .ai-form-side {
+        padding: 20px;
+        border-right: 1px solid var(--border);
+        background: #fffaf4;
+    }
+
+    .ai-result-side {
+        padding: 20px;
+    }
+
+    .ai-label {
+        display: block;
+        color: var(--dark);
+        font-size: 13px;
+        font-weight: 900;
+        margin: 12px 0 6px;
+    }
+
+    .ai-input,
+    .ai-select,
+    .ai-textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        padding: 11px 12px;
+        font-size: 13px;
+        outline: none;
+        background: #ffffff;
+    }
+
+    .ai-textarea {
+        min-height: 105px;
+        resize: vertical;
+    }
+
+    .chat-window {
+        background: #f8f3ec;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+        height: 260px;
+        overflow-y: auto;
+        margin-bottom: 12px;
+    }
+
+    .chat-msg {
+        max-width: 88%;
+        padding: 10px 12px;
+        border-radius: 16px;
+        margin-bottom: 10px;
+        font-size: 13px;
+        line-height: 1.45;
+        font-weight: 700;
+    }
+
+        .chat-msg.bot {
+            background: #ffffff;
+            color: #404852;
+            border: 1px solid #ead8c2;
+        }
+
+        .chat-msg.user {
+            background: var(--orange);
+            color: #ffffff;
+            margin-left: auto;
+        }
+
+    .chat-send-row {
+        display: grid;
+        grid-template-columns: 1fr 100px;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .ai-report {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .ai-report-card {
+        background: #fffdf9;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 14px;
+    }
+
+        .ai-report-card h5 {
+            color: var(--orange);
+            font-size: 14px;
+            font-weight: 900;
+            margin: 0 0 8px;
+        }
+
+        .ai-report-card p,
+        .ai-report-card li {
+            color: #4f5964;
+            font-size: 13px;
+            line-height: 1.55;
+            margin-bottom: 5px;
+        }
+
+    .palette-row {
+        display: flex;
+        gap: 7px;
+        margin-top: 8px;
+    }
+
+    .palette-dot {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    .ai-visual-mini {
+        min-height: 150px;
+        border-radius: 16px;
+        border: 1px solid #ead8c2;
+        background: linear-gradient(180deg, #eee7dd 0%, #faf4ed 58%, #d2b48c 59%, #c29b6f 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mini-main {
+        position: absolute;
+        left: 34%;
+        bottom: 30px;
+        width: 32%;
+        height: 45px;
+        background: rgba(255,121,0,0.25);
+        border: 2px solid rgba(255,121,0,0.45);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b3500;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .mini-left,
+    .mini-right {
+        position: absolute;
+        bottom: 34px;
+        width: 20%;
+        height: 34px;
+        border-radius: 14px;
+        background: rgba(255,255,255,0.75);
+        border: 1px solid rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 900;
+        color: #4f5964;
+    }
+
+    .mini-left {
+        left: 8%;
+    }
+
+    .mini-right {
+        right: 8%;
+    }
+
+    .ai-download-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
+
+
+
+
+
+    .full-room-preview-card {
+        grid-column: 1 / -1;
+        background: #fffdf9;
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 16px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+    }
+
+        .full-room-preview-card h5 {
+            color: var(--orange);
+            font-size: 16px;
+            font-weight: 900;
+            margin: 0 0 12px;
+        }
+
+    .full-room-photo {
+        width: 100%;
+        height: 430px;
+        border-radius: 20px;
+        object-fit: cover;
+        display: block;
+        border: 1px solid #e8d4bd;
+        box-shadow: 0 16px 36px rgba(0,0,0,0.14);
+        background: #eee7dc;
+    }
+
+    .full-room-preview-text {
+        margin-top: 12px;
+        color: #4f5964;
+        font-size: 13px;
+        line-height: 1.6;
+        font-weight: 700;
+    }
+
+    .full-room-tags {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+    }
+
+    .full-room-tag {
+        background: #fff8ef;
+        border: 1px solid #ead8c2;
+        border-radius: 15px;
+        padding: 10px;
+        text-align: center;
+        color: #20242a;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .ai-mode-box {
+        background: #f7fbff;
+        border: 1px solid #d8e8f5;
+        color: #3c5870;
+        border-radius: 16px;
+        padding: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 12px 0;
+        font-weight: 800;
+    }
+
+
+
+
+
+    .custom-chat-help {
+        background: #fff7ef;
+        border: 1px solid #ffd1a3;
+        border-radius: 16px;
+        padding: 12px;
+        margin-top: 10px;
+        color: #6b3b00;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.55;
+    }
+
+    .chat-msg.bot.designer strong {
+        color: #ff7900;
+    }
+
+    .ai-part-title {
+        background: #1f252c;
+        color: #ffffff;
+        border-radius: 16px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        font-size: 14px;
+        font-weight: 900;
+    }
+
+        .ai-part-title span {
+            color: #ffb26b;
+        }
+
+    .chatbot-guide {
+        background: #fffaf3;
+        border: 1px solid #ead8c2;
+        border-radius: 16px;
+        padding: 12px;
+        margin-bottom: 12px;
+        color: #4f5964;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.55;
+    }
+
+    .designer-mode-note {
+        background: #fff4e6;
+        border: 1px solid #ffd1a3;
+        color: #6d3900;
+        border-radius: 16px;
+        padding: 12px;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.55;
+        margin: 10px 0 12px;
+    }
+
+    .chat-msg.bot.designer {
+        background: #ffffff;
+        border-left: 5px solid #ff7900;
+        white-space: pre-line;
+        max-width: 96%;
+    }
+
+    .chat-msg.user {
+        white-space: pre-line;
+    }
+
+    .chat-example-box {
+        background: #f7fbff;
+        border: 1px solid #d8e8f5;
+        color: #3c5870;
+        border-radius: 16px;
+        padding: 12px;
+        margin-top: 12px;
+        font-size: 13px;
+        line-height: 1.55;
+        font-weight: 800;
+    }
+
+    .designer-card-wide {
+        grid-column: 1 / -1;
+        background: #fffdf9;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 16px;
+    }
+
+        .designer-card-wide h5 {
+            color: var(--orange);
+            font-size: 15px;
+            font-weight: 900;
+            margin: 0 0 10px;
+        }
+
+        .designer-card-wide p,
+        .designer-card-wide li {
+            color: #4f5964;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+
+    .ready-room-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .ready-room-btn {
+        border: 1px solid #ffd1a3;
+        background: #fff4e6;
+        color: #7a3d00;
+        border-radius: 14px;
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 900;
+        cursor: pointer;
+        text-align: center;
+    }
+
+        .ready-room-btn:hover {
+            background: var(--orange);
+            color: white;
+            border-color: var(--orange);
+        }
+
+    .apply-design-box {
+        background: #f7fbff;
+        border: 1px solid #d8e8f5;
+        color: #3c5870;
+        border-radius: 16px;
+        padding: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-top: 12px;
+        font-weight: 800;
+    }
+
+    .category-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 12px;
+    }
+
+    .category-tab {
+        border: 1px solid var(--border);
+        background: #fff8ef;
+        color: var(--dark);
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+        .category-tab.active {
+            background: var(--orange);
+            color: #ffffff;
+            border-color: var(--orange);
+        }
+
+    .selected-info-card {
+        background: #fff8ef;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 12px;
+        margin-top: 12px;
+    }
+
+        .selected-info-card h5 {
+            color: var(--orange);
+            font-size: 14px;
+            font-weight: 900;
+            margin: 0 0 6px;
+        }
+
+        .selected-info-card p {
+            color: #4f5964;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.45;
+            margin: 0 0 4px;
+        }
+
+    .quick-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin: 10px 0 12px;
+    }
+
+    .quick-chip {
+        border: 1px solid #ffd1a3;
+        background: #fff4e6;
+        color: #7a3d00;
+        border-radius: 999px;
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+        .quick-chip:hover {
+            background: #ff7900;
+            color: white;
+        }
+
+
+    @@media screen and (max-width: 980px) {
+        .studio-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .mode-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .room-stage {
+            height: 520px;
+        }
+
+        .controls-bar {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .workspace-head {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .ai-chat-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .ai-form-side {
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ai-report {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="ar-page">
+    <div class="ar-container">
+        <div class="ar-hero">
+            <h1>AR Room Furniture Placement Studio</h1>
+            <p>
+                Capture a room photo using camera or upload a gallery image, then place multiple furniture items,
+                move them, resize, rotate and download the final room design.
+            </p>
+        </div>
+
+        <div class="mode-grid">
+            <div class="mode-card active" onclick="openOptionOne()" style="cursor:pointer;">
+                <h4>Option 1 — Camera AR Placement</h4>
+                <p>Camera se room photo capture karo aur multiple furniture place karo.</p>
+            </div>
+            <div class="mode-card" onclick="openOptionTwo()" style="cursor:pointer;">
+                <h4>Option 2 — Gallery Upload Placement</h4>
+                <p>Gallery se room image upload karo aur us par furniture place karo.</p>
+            </div>
+            <div class="mode-card" onclick="openOptionThree()" style="cursor:pointer;">
+                <h4>Option 3 — AI Chatbot Suggestions</h4>
+                <p>Room type, style aur requirement ke hisaab se chatbot design suggestions dega.</p>
+            </div>
+        </div>
+
+        <div class="studio-grid">
+            <div class="left-tools">
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>1. Add Room Image</h3>
+                        <p>Camera se room capture karo ya gallery se image upload karo.</p>
+                    </div>
+
+                    <div class="panel-body">
+                        @if (!isLoggedIn)
+                        {
+                            <div class="login-note">
+                                Login recommended: save feature ke liye account required ho sakta hai.
+                            </div>
+                        }
+
+                        <div class="camera-box">
+                            <video id="cameraVideo" autoplay playsinline></video>
+                            <div class="camera-placeholder" id="cameraPlaceholder">
+                                Camera preview yahan show hoga.
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <button type="button" class="btn-orange" onclick="startCamera()">Open Camera</button>
+                            <button type="button" class="btn-dark-soft" onclick="captureRoomPhoto()">Capture</button>
+                        </div>
+
+                        <button type="button" class="btn-outline-soft mt-2" onclick="stopCamera()">Stop Camera</button>
+
+                        <div class="upload-box">
+                            <strong>Or Upload From Gallery</strong>
+                            <input type="file" id="roomUploadInput" class="form-control" accept="image/*" onchange="uploadRoomImage(event)" />
+                        </div>
+
+                        <div class="hint">
+                            Pehle room image add karo. Uske baad furniture library se multiple items add kar sakti ho.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel mt-3">
+                    <div class="panel-head">
+                        <h3>2. Room Furniture Sets</h3>
+                        <p>Pehle room set select karo: Living, Bedroom, Kitchen, Bathroom etc. Phir us folder ki items show hongi.</p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="category-tabs" id="categoryTabs">
+                            <button type="button" class="category-tab active" onclick="selectRoomSet('all', this)">All</button>
+                            <button type="button" class="category-tab" onclick="selectRoomSet('living-room-set', this)">Living Room</button>
+                            <button type="button" class="category-tab" onclick="selectRoomSet('bedroom-set', this)">Bedroom</button>
+                            <button type="button" class="category-tab" onclick="selectRoomSet('kitchen-set', this)">Kitchen</button>
+                            <button type="button" class="category-tab" onclick="selectRoomSet('drawing-room-set', this)">Drawing Room</button>
+                            <button type="button" class="category-tab" onclick="selectRoomSet('tv-lounge-set', this)">TV Lounge</button>
+                            <button type="button" class="category-tab" onclick="selectRoomSet('bathroom-set', this)">Bathroom</button>
+                            <button type="button" class="category-tab" onclick="selectRoomSet('balcony-set', this)">Balcony</button>
+                        </div>
+
+                        <div class="library-grid" id="furnitureLibrary"></div>
+
+                        <div class="selected-info-card" id="selectedInfoCard">
+                            <h5>Selected Furniture</h5>
+                            <p>No furniture selected yet.</p>
+                            <p>Tip: Add room image first, then select furniture from library.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel workspace-panel">
+                <div class="workspace-head">
+                    <div>
+                        <h3>Room Design Workspace</h3>
+                        <div style="font-size:13px; color:#6b7280; margin-top:4px;">
+                            Select furniture, then use controls for resize, rotate, delete and layer adjustment.
+                        </div>
+                    </div>
+
+                    <div class="workspace-actions">
+                        <button type="button" class="small-btn" onclick="clearFurniture()">Clear Furniture</button>
+                        <button type="button" class="small-btn" onclick="resetRoom()">Reset Room</button>
+                        <button type="button" class="small-btn orange" onclick="downloadFinalDesign()">Download Design</button>
+                        <button type="button" class="small-btn orange" onclick="saveFinalDesign()">Save Design</button>
+                    </div>
+                </div>
+
+                <div class="room-stage-wrap">
+                    <div class="room-stage" id="roomStage">
+                        <div class="room-empty" id="roomEmpty">
+                            No room image selected yet.<br />
+                            Open camera and capture a room photo OR upload a gallery image.
+                        </div>
+                        <img id="roomBackground" class="room-bg" style="display:none;" alt="Room Background" />
+                    </div>
+
+                    <div class="controls-bar">
+                        <button type="button" class="control-btn" onclick="resizeSelected(1.12)">Size +</button>
+                        <button type="button" class="control-btn" onclick="resizeSelected(0.88)">Size -</button>
+                        <button type="button" class="control-btn" onclick="rotateSelected(-10)">Rotate Left</button>
+                        <button type="button" class="control-btn" onclick="rotateSelected(10)">Rotate Right</button>
+                        <button type="button" class="control-btn danger" onclick="deleteSelected()">Delete</button>
+                    </div>
+
+                    <div class="controls-bar">
+                        <button type="button" class="control-btn" onclick="bringForward()">Layer Up</button>
+                        <button type="button" class="control-btn" onclick="sendBackward()">Layer Down</button>
+                        <button type="button" class="control-btn" onclick="flipSelected()">Flip</button>
+                        <button type="button" class="control-btn" onclick="duplicateSelected()">Duplicate</button>
+                        <button type="button" class="control-btn" onclick="centerSelected()">Center</button>
+                    </div>
+
+                    <div class="status-line" id="statusLine">
+                        Ready. Add a room image first.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ai-chat-section" id="aiChatbotSection">
+            <div class="panel-head">
+                <h3>Option 2 — AI Room Designer Assistant</h3>
+                <p>
+                    Ye module room type, style, budget aur user requirement ke hisaab se proper interior suggestions deta hai.
+                    Isko supervisor ko AI suggestion chatbot ke tor par explain karna hai.
+                </p>
+            </div>
+
+            <div class="ai-chat-grid">
+                <div class="ai-form-side">
+                    <label class="ai-label">Room Type</label>
+                    <select class="ai-select" id="aiRoomType">
+                        <option>Bedroom</option>
+                        <option>Kitchen</option>
+                        <option>Bathroom</option>
+                        <option>Living Room</option>
+                        <option>Dining Room</option>
+                        <option>Balcony</option>
+                        <option>Garage</option>
+                        <option>TV Lounge</option>
+                    </select>
+
+                    <label class="ai-label">Interior Style</label>
+                    <select class="ai-select" id="aiStyle">
+                        <option>Modern</option>
+                        <option>Luxury</option>
+                        <option>Minimal</option>
+                        <option>Classic</option>
+                        <option>Cozy</option>
+                        <option>Premium</option>
+                    </select>
+
+                    <label class="ai-label">Budget Level</label>
+                    <select class="ai-select" id="aiBudget">
+                        <option>Low Budget</option>
+                        <option>Medium Budget</option>
+                        <option>Premium Budget</option>
+                        <option>Luxury Budget</option>
+                    </select>
+
+                    <div class="ai-part-title"><span>Part A</span> — Chatbot Conversation</div>
+
+                    <div class="chatbot-guide">
+                        Yahan free chat hai. Tum apni marzi ka prompt likh sakti ho:
+                        “Mere bedroom mein bed, wardrobe aur side table hai. Mujhe batao kahan place karun aur storage kaise add karun?”
+                    </div>
+
+                    <label class="ai-label">Your Requirement</label>
+                    <textarea class="ai-textarea" id="aiPrompt" placeholder="Example: Mere bedroom mein bed, wardrobe aur side table hai. Mujhe batao kahan place karun, storage kaise add karun aur lighting kaisi honi chahiye."></textarea>
+
+                    <div class="custom-chat-help">
+                        Is box mein tum free typing karo. Chatbot room type, furniture, color, lighting, storage aur budget ko samajh kar detailed suggestion dega.
+                    </div>
+
+                    <div class="ai-part-title" style="margin-top:16px;"><span>Part B</span> — Ready-Made Real Room Designs</div>
+                    <label class="ai-label">Ready-Made Room Designs</label>
+                    <div class="ready-room-grid">
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('Bedroom')">Bedroom</button>
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('Kitchen')">Kitchen</button>
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('Bathroom')">Bathroom</button>
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('Living Room')">Living Room</button>
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('TV Lounge')">TV Lounge</button>
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('Balcony')">Balcony</button>
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('Garage')">Garage</button>
+                        <button type="button" class="ready-room-btn" onclick="readyRoomDesign('Dining Room')">Dining Room</button>
+                    </div>
+
+                    <div class="apply-design-box">
+                        Ready-made design select karo, phir “Apply AI Design to Room” click karo. Furniture automatically workspace mein add ho jayega.
+                    </div>
+
+                    <button type="button" class="btn-orange mt-3" onclick="askCustomChatbot()">Ask Custom AI Chatbot</button>
+                    <button type="button" class="btn-dark-soft mt-2" onclick="applyAIDesignToRoom()">Apply AI Design to Room</button>
+                    <button type="button" class="btn-outline-soft mt-2" onclick="downloadAIReport()">Download AI Chat Report</button>
+                </div>
+
+                <div class="ai-result-side">
+                    <div class="designer-mode-note">
+                        <strong>Mode 1 — Chatbot Designer:</strong> yahan tum normal chat kar sakti ho.
+                        Apna room size, furniture, color, budget ya problem likho, chatbot step-by-step interior suggestion dega.
+                    </div>
+
+                    <div class="chat-window" id="chatWindow">
+                        <div class="chat-msg bot designer">
+                            Hi, I am your AI Room Designer.
+
+                            Tell me your room requirement like:
+                            “My bedroom is small. I have bed, wardrobe and side table. I want more storage and warm lighting.”
+
+                            I will suggest:
+                            1. Furniture placement
+                            2. Wall color
+                            3. Lighting
+                            4. Storage
+                            5. Mistakes to avoid
+                        </div>
+                    </div>
+
+                    <div class="quick-chip-row">
+                        <button type="button" class="quick-chip" onclick="quickAI('My room is small. Suggest furniture placement and storage.')">Small room placement</button>
+                        <button type="button" class="quick-chip" onclick="quickAI('I have bed, wardrobe and side table. Tell me where to place them.')">Where to place furniture?</button>
+                        <button type="button" class="quick-chip" onclick="quickAI('Change wall color to cream and suggest matching furniture.')">Cream wall color</button>
+                        <button type="button" class="quick-chip" onclick="quickAI('Improve lighting and make the room warm and cozy.')">Improve lighting</button>
+                        <button type="button" class="quick-chip" onclick="quickAI('Make it luxury but keep budget medium.')">Luxury medium budget</button>
+                    </div>
+
+                    <div class="chat-send-row">
+                        <input type="text" class="ai-input" id="chatFollowUp" placeholder="Ask follow-up change, e.g. add storage or change color..." onkeydown="if(event.key === 'Enter'){ sendAIChatMessage(); }" />
+                        <button type="button" class="btn-orange" onclick="sendAIChatMessage()">Send</button>
+                    </div>
+
+                    <div class="ai-report" id="aiReportBox">
+                        <div class="ai-report-card">
+                            <h5>AI Output</h5>
+                            <p>Generated AI suggestions will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<canvas id="exportCanvas" class="hidden-canvas"></canvas>
+
+<script>
+    const isUserLoggedIn = document.getElementById("loginStateValue").value === "true";
+
+    let latestAIReportText = "";
+
+    function openOptionOne() {
+        document.querySelector(".workspace-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+        setStatus("Option 1 active: Use camera capture for room furniture placement.");
+    }
+
+    function openOptionTwo() {
+        document.querySelector(".workspace-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+        setStatus("Option 2 active: Upload room image from gallery, then add furniture.");
+        setTimeout(function () {
+            const input = document.getElementById("roomUploadInput");
+            if (input) input.click();
+        }, 500);
+    }
+
+    function openOptionThree() {
+        document.getElementById("aiChatbotSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function getAISuggestionData(roomType, style, budget, prompt) {
+        const key = roomType.toLowerCase();
+
+        let layout = [];
+        let furniture = [];
+        let lighting = [];
+        let decor = [];
+
+        if (key.includes("kitchen")) {
+            layout = ["Use a clean working triangle between sink, cooking area and preparation counter.", "Keep cabinets on vertical walls to save space.", "Keep the center area open for movement."];
+            furniture = ["Base cabinets", "Wall cabinets", "Kitchen counter", "Sink area", "Small breakfast corner if space allows"];
+            lighting = ["Task light under cabinets", "Ceiling light for general brightness", "Warm strip light for premium look"];
+            decor = ["Matte backsplash", "Neutral counter accessories", "Small indoor plant"];
+        } else if (key.includes("bath")) {
+            layout = ["Place vanity near entrance side.", "Keep shower zone separate with glass partition concept.", "Use wall storage to avoid clutter."];
+            furniture = ["Vanity unit", "Mirror", "Tall storage cabinet", "Shower screen", "Towel shelf"];
+            lighting = ["Mirror light", "Ceiling light", "Soft warm accent light"];
+            decor = ["Large mirror", "Neutral tiles", "Small plant", "Gold/black fixtures according to style"];
+        } else if (key.includes("dining")) {
+            layout = ["Place dining table in center with walking space around it.", "Use side wall for console or crockery unit.", "Keep light centered above table."];
+            furniture = ["Dining table", "Dining chairs", "Console table", "Pendant light", "Rug if space allows"];
+            lighting = ["Pendant light above table", "Soft wall light", "Warm ambient ceiling light"];
+            decor = ["Centerpiece", "Wall art", "Crockery display", "Neutral rug"];
+        } else if (key.includes("balcony")) {
+            layout = ["Use compact seating on one side.", "Keep plants on corners to save floor area.", "Use small table in center."];
+            furniture = ["Outdoor chair", "Small coffee table", "Planters", "Outdoor rug", "Wall light"];
+            lighting = ["Warm string lights", "Wall mounted outdoor light", "Small lantern"];
+            decor = ["Plants", "Outdoor cushions", "Small rug", "Minimal wall decor"];
+        } else if (key.includes("tv")) {
+            layout = ["Place sofa facing TV wall.", "Keep media console below TV.", "Use rug to define seating zone."];
+            furniture = ["Sofa", "TV console", "Coffee table", "Rug", "Floor lamp", "Side table"];
+            lighting = ["Backlight behind TV", "Floor lamp near sofa", "Warm ceiling light"];
+            decor = ["Wall panels", "Plant", "Minimal shelves", "Cushions"];
+        } else if (key.includes("living")) {
+            layout = ["Place sofa as main seating focus.", "Use coffee table in center.", "Keep one accent chair for balance."];
+            furniture = ["Sofa", "Coffee table", "Accent chair", "Rug", "Plant", "Floor lamp"];
+            lighting = ["Floor lamp", "Warm ambient light", "Accent light for wall decor"];
+            decor = ["Cushions", "Wall art", "Plant", "Decor tray"];
+        } else if (key.includes("garage")) {
+            layout = ["Keep parking area clear in center.", "Use wall-mounted storage to save floor space.", "Create separate tool/storage zone on one side."];
+            furniture = ["Storage cabinet", "Wall shelves", "Tool rack", "Utility table", "Bright ceiling light"];
+            lighting = ["Bright ceiling light", "Task light near workbench", "Motion sensor light if required"];
+            decor = ["Grey wall paint", "Durable flooring", "Labelled storage boxes", "Safety corner"];
+        } else {
+            layout = ["Place bed on main feature wall.", "Keep side tables on both sides if space allows.", "Use wardrobe on side wall without blocking movement."];
+            furniture = ["Bed", "Side tables", "Wardrobe", "Rug", "Table lamps", "Study/vanity corner if space allows"];
+            lighting = ["Warm bedside lamps", "Soft ceiling light", "Accent light behind headboard"];
+            decor = ["Cream wall paint", "Curtains", "Minimal wall art", "Neutral rug", "Storage baskets"];
+        }
+
+        const colors = getPaletteForStyle(style);
+
+        return { layout, furniture, lighting, decor, colors };
+    }
+
+    function getPaletteForStyle(style) {
+        const s = style.toLowerCase();
+
+        if (s.includes("luxury")) return ["#efe2cf", "#b69261", "#2f2f2f", "#ffffff"];
+        if (s.includes("modern")) return ["#e8edf1", "#667985", "#ffffff", "#222831"];
+        if (s.includes("minimal")) return ["#f4f1ea", "#c9b8a6", "#ffffff", "#3b3b3b"];
+        if (s.includes("classic")) return ["#efe6d8", "#8c6a4a", "#ffffff", "#2c2118"];
+        if (s.includes("cozy")) return ["#f0ddc9", "#b88763", "#fff7ef", "#5f4634"];
+        return ["#e9e1d2", "#9b7b4f", "#ffffff", "#232323"];
+    }
+
+    function paletteHtml(colors) {
+        return "<div class='palette-row'>" + colors.map(c => "<span class='palette-dot' style='background:" + c + "'></span>").join("") + "</div>";
+    }
+
+    function listHtml(items) {
+        return "<ul>" + items.map(x => "<li>" + x + "</li>").join("") + "</ul>";
+    }
+
+    function addChatMessage(text, type) {
+        const chat = document.getElementById("chatWindow");
+        const msg = document.createElement("div");
+        msg.className = type === "bot" ? "chat-msg bot designer" : "chat-msg user";
+        msg.innerText = text;
+        chat.appendChild(msg);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+
+    function readyRoomDesign(roomType) {
+        const roomSelect = document.getElementById("aiRoomType");
+        const styleSelect = document.getElementById("aiStyle");
+        const budgetSelect = document.getElementById("aiBudget");
+        const promptBox = document.getElementById("aiPrompt");
+
+        roomSelect.value = roomType;
+
+        if (roomType === "Bedroom") {
+            styleSelect.value = "Luxury";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a luxury bedroom with cream walls, warm lighting, bed, side tables, wardrobe, rug and modern storage.";
+        } else if (roomType === "Kitchen") {
+            styleSelect.value = "Modern";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a modern kitchen with clean cabinets, counter space, warm lighting, storage and easy movement.";
+        } else if (roomType === "Bathroom") {
+            styleSelect.value = "Minimal";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a clean bathroom design with vanity, mirror, storage, light tiles, warm lighting and neat layout.";
+        } else if (roomType === "Living Room") {
+            styleSelect.value = "Modern";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a modern living room with sofa, coffee table, rug, plant, floor lamp and balanced seating layout.";
+        } else if (roomType === "TV Lounge") {
+            styleSelect.value = "Premium";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a TV lounge with sofa facing TV wall, media console, coffee table, rug and warm back lighting.";
+        } else if (roomType === "Balcony") {
+            styleSelect.value = "Cozy";
+            budgetSelect.value = "Low Budget";
+            promptBox.value = "Create a cozy balcony with outdoor chair, small tea table, plants, outdoor rug and warm lights.";
+        } else if (roomType === "Garage") {
+            styleSelect.value = "Modern";
+            budgetSelect.value = "Low Budget";
+            promptBox.value = "Create a functional garage with clear parking space, wall shelves, storage cabinet, tool area and bright lighting.";
+        } else if (roomType === "Dining Room") {
+            styleSelect.value = "Classic";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a dining room with dining table, chairs, pendant light, console storage and elegant color palette.";
+        }
+
+        generateAISuggestions();
+        document.getElementById("aiChatbotSection").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function getAutoFurnitureForRoom(roomType) {
+        const key = roomType.toLowerCase();
+
+        if (key.includes("kitchen")) {
+            return ["Wardrobe", "Side Table", "Plant", "Table Lamp"];
+        }
+
+        if (key.includes("bath")) {
+            return ["Wardrobe", "Plant", "Table Lamp", "Side Table"];
+        }
+
+        if (key.includes("living")) {
+            return ["Sofa", "Coffee Table", "Rug", "Plant", "Floor Lamp"];
+        }
+
+        if (key.includes("tv")) {
+            return ["Sofa", "Coffee Table", "Rug", "Floor Lamp", "Side Table"];
+        }
+
+        if (key.includes("balcony")) {
+            return ["Chair", "Side Table", "Plant", "Rug", "Table Lamp"];
+        }
+
+        if (key.includes("garage")) {
+            return ["Wardrobe", "Bookshelf", "Side Table", "Table Lamp"];
+        }
+
+        if (key.includes("dining")) {
+            return ["Coffee Table", "Chair", "Chair", "Rug", "Floor Lamp"];
+        }
+
+        return ["Bed", "Side Table", "Table Lamp", "Rug", "Wardrobe"];
+    }
+
+    function applyAIDesignToRoom() {
+        if (!hasRoomImage) {
+            alert("Please capture or upload a room image first, then apply AI design.");
+            document.querySelector(".workspace-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+            return;
+        }
+
+        const roomType = document.getElementById("aiRoomType").value;
+        const autoItems = getAutoFurnitureForRoom(roomType);
+
+        clearFurniture();
+
+        let offset = 0;
+
+        autoItems.forEach(itemName => {
+            const item = furnitureItems.find(f => f.name === itemName);
+
+            if (item) {
+                addFurnitureToRoom(item);
+
+                if (selectedItem) {
+                    selectedItem.style.left = (30 + offset) + "%";
+                    selectedItem.style.top = (50 + (offset % 2) * 6) + "%";
+                    selectedItem.style.zIndex = ++highestZ;
+                    offset += 7;
+                }
+            }
+        });
+
+        setStatus("AI ready-made " + roomType + " design applied to room. You can now drag, resize and rotate furniture.");
+        document.querySelector(".workspace-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+
+
+    function getFullRoomImage(roomType) {
+        const key = roomType.toLowerCase();
+
+        if (key.includes("kitchen")) {
+            return "https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=1400&q=80";
+        }
+
+        if (key.includes("bath")) {
+            return "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1400&q=80";
+        }
+
+        if (key.includes("living")) {
+            return "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=80";
+        }
+
+        if (key.includes("tv")) {
+            return "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=80";
+        }
+
+        if (key.includes("balcony")) {
+            return "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=1400&q=80";
+        }
+
+        if (key.includes("garage")) {
+            return "https://images.unsplash.com/photo-1590674899484-d5640e854abe?auto=format&fit=crop&w=1400&q=80";
+        }
+
+        if (key.includes("dining")) {
+            return "https://images.unsplash.com/photo-1617806118233-18e1de247200?auto=format&fit=crop&w=1400&q=80";
+        }
+
+        return "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=1400&q=80";
+    }
+
+    function getRoomTags(roomType) {
+        const key = roomType.toLowerCase();
+
+        if (key.includes("kitchen")) return ["Cabinets", "Counter", "Sink Zone", "Task Lighting"];
+        if (key.includes("bath")) return ["Vanity", "Mirror", "Tiles", "Storage"];
+        if (key.includes("living")) return ["Sofa", "Coffee Table", "Rug", "Warm Decor"];
+        if (key.includes("tv")) return ["TV Wall", "Sofa", "Media Unit", "Back Light"];
+        if (key.includes("balcony")) return ["Outdoor Chair", "Plants", "Tea Table", "String Lights"];
+        if (key.includes("garage")) return ["Parking Space", "Wall Storage", "Tool Zone", "Bright Light"];
+        if (key.includes("dining")) return ["Dining Table", "Chairs", "Pendant Light", "Console"];
+        return ["Bed", "Side Tables", "Wardrobe", "Warm Lighting"];
+    }
+
+    function buildFullRoomPreview(roomType, style) {
+        const img = getFullRoomImage(roomType);
+        const tags = getRoomTags(roomType);
+
+        return "<div class='full-room-preview-card'>" +
+            "<h5>Ready-Made Real Room Design Preview</h5>" +
+            "<img class='full-room-photo' src='" + img + "' alt='" + roomType + " Ready Design' />" +
+            "<p class='full-room-preview-text'><strong>" + roomType + " — " + style + " Style:</strong> This realistic reference shows how the final room design can look with proper furniture placement, wall colors, lighting, decor and spacing.</p>" +
+            "<div class='full-room-tags'>" +
+            tags.map(t => "<div class='full-room-tag'>" + t + "</div>").join("") +
+            "</div>" +
+            "</div>";
+    }
+
+    function readyRoomDesign(roomType) {
+        const roomSelect = document.getElementById("aiRoomType");
+        const styleSelect = document.getElementById("aiStyle");
+        const budgetSelect = document.getElementById("aiBudget");
+        const promptBox = document.getElementById("aiPrompt");
+
+        roomSelect.value = roomType;
+
+        if (roomType === "Bedroom") {
+            styleSelect.value = "Luxury";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a luxury bedroom with cream walls, warm lighting, bed, side tables, wardrobe, rug and modern storage.";
+        } else if (roomType === "Kitchen") {
+            styleSelect.value = "Modern";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a modern kitchen with clean cabinets, counter space, warm lighting, storage and easy movement.";
+        } else if (roomType === "Bathroom") {
+            styleSelect.value = "Minimal";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a clean bathroom design with vanity, mirror, storage, light tiles, warm lighting and neat layout.";
+        } else if (roomType === "Living Room") {
+            styleSelect.value = "Modern";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a modern living room with sofa, coffee table, rug, plant, floor lamp and balanced seating layout.";
+        } else if (roomType === "TV Lounge") {
+            styleSelect.value = "Premium";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a TV lounge with sofa facing TV wall, media console, coffee table, rug and warm back lighting.";
+        } else if (roomType === "Balcony") {
+            styleSelect.value = "Cozy";
+            budgetSelect.value = "Low Budget";
+            promptBox.value = "Create a cozy balcony with outdoor chair, small tea table, plants, outdoor rug and warm lights.";
+        } else if (roomType === "Garage") {
+            styleSelect.value = "Modern";
+            budgetSelect.value = "Low Budget";
+            promptBox.value = "Create a functional garage with clear parking space, wall shelves, storage cabinet, tool area and bright lighting.";
+        } else if (roomType === "Dining Room") {
+            styleSelect.value = "Classic";
+            budgetSelect.value = "Medium Budget";
+            promptBox.value = "Create a dining room with dining table, chairs, pendant light, console storage and elegant color palette.";
+        }
+
+        generateAISuggestions();
+        document.getElementById("aiReportBox").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+
+
+    function normalizeText(value) {
+        return (value || "").toLowerCase();
+    }
+
+    function customDetectRoom(message) {
+        const m = normalizeText(message);
+
+        if (m.includes("kitchen") || m.includes("kichen") || m.includes("kitten")) return "Kitchen";
+        if (m.includes("bathroom") || m.includes("washroom") || m.includes("toilet")) return "Bathroom";
+        if (m.includes("living")) return "Living Room";
+        if (m.includes("tv") || m.includes("lounge")) return "TV Lounge";
+        if (m.includes("balcony")) return "Balcony";
+        if (m.includes("garage") || m.includes("graduge")) return "Garage";
+        if (m.includes("dining")) return "Dining Room";
+        if (m.includes("bedroom") || m.includes("bed room") || m.includes("bed")) return "Bedroom";
+        if (m.includes("study") || m.includes("desk") || (m.includes("table") && m.includes("chair"))) return "Study Corner";
+
+        return "General Room";
+    }
+
+    function customDetectStyle(message) {
+        const m = normalizeText(message);
+
+        if (m.includes("luxury") || m.includes("royal") || m.includes("premium")) return "Luxury";
+        if (m.includes("modern")) return "Modern";
+        if (m.includes("minimal") || m.includes("simple")) return "Minimal";
+        if (m.includes("classic")) return "Classic";
+        if (m.includes("cozy") || m.includes("warm")) return "Cozy";
+
+        const selected = document.getElementById("aiStyle");
+        return selected ? selected.value : "Modern";
+    }
+
+    function customDetectBudget(message) {
+        const m = normalizeText(message);
+
+        if (m.includes("low") || m.includes("cheap") || m.includes("budget") || m.includes("kam")) return "Low Budget";
+        if (m.includes("medium")) return "Medium Budget";
+        if (m.includes("premium") || m.includes("luxury") || m.includes("high")) return "Premium Budget";
+
+        const selected = document.getElementById("aiBudget");
+        return selected ? selected.value : "Medium Budget";
+    }
+
+    function customDetectNeeds(message) {
+        const m = normalizeText(message);
+        const needs = [];
+
+        if (m.includes("storage") || m.includes("wardrobe") || m.includes("almari") || m.includes("shelf")) needs.push("extra storage");
+        if (m.includes("light") || m.includes("lighting") || m.includes("warm")) needs.push("warm lighting");
+        if (m.includes("color") || m.includes("wall") || m.includes("cream") || m.includes("paint")) needs.push("wall color palette");
+        if (m.includes("small") || m.includes("space") || m.includes("compact")) needs.push("space saving layout");
+        if (m.includes("luxury") || m.includes("premium")) needs.push("luxury finishing");
+        if (m.includes("sofa")) needs.push("sofa placement");
+        if (m.includes("bed")) needs.push("bed placement");
+        if (m.includes("table")) needs.push("table placement");
+        if (m.includes("plant")) needs.push("decor plants");
+
+        if (needs.length === 0) needs.push("balanced room design");
+
+        return needs;
+    }
+
+    function buildCustomChatbotAnswer(message) {
+        const room = customDetectRoom(message);
+        const style = customDetectStyle(message);
+        const budget = customDetectBudget(message);
+        const needs = customDetectNeeds(message);
+        const m = normalizeText(message);
+
+        let placement = [];
+        let color = [];
+        let lighting = [];
+        let storage = [];
+        let decor = [];
+        let mistakes = [];
+
+        if (room === "Study Corner" || m.includes("study table") || m.includes("desk") || (m.includes("table") && m.includes("chair"))) {
+            placement = [
+                "Study table ko window ke near ya side wall ke sath place karo taake natural light mil sake.",
+                "Chair ko table ke center mein rakho aur peeche 2.5 to 3 feet movement space choro.",
+                "Table ko bed/sofa ke bilkul samne overcrowded jagah par mat rakho.",
+                "Agar room small hai to table ko corner wall ke sath rakho aur wall shelf upar add karo.",
+                "Laptop/books ke liye table ke right ya left side par small storage tray use karo."
+            ];
+            color = [
+                "Study zone ke liye cream, off-white, light grey ya soft wood tone best rahega.",
+                "Table color room furniture se match karo, warna design mismatched lagega.",
+                "Chair neutral color rakho: beige, grey, white ya black."
+            ];
+            lighting = [
+                "Table par focused task lamp zaroor rakho.",
+                "Agar window light left side se aaye to writing/working comfortable hoti hai.",
+                "Warm white light use karo; overly yellow ya dim light avoid karo."
+            ];
+            storage = [
+                "Wall shelf table ke upar add karo for books and decor.",
+                "Side drawer unit table ke neeche ya side par rakho.",
+                "Cable management clips use karo taake workspace clean lage."
+            ];
+            decor = [
+                "Ek small plant, pen holder aur minimal wall art enough hai.",
+                "Table par unnecessary decoration na rakho.",
+                "Rug optional hai, lekin chair ke neeche flat rug use karo agar floor empty lag raha ho."
+            ];
+            mistakes = [
+                "Study table ko door ke bilkul samne mat rakho.",
+                "Chair ke peeche movement space block mat karo.",
+                "Table par too many accessories mat rakho.",
+                "Dim lighting mein study zone mat banao."
+            ];
+        } else if (room === "Bedroom") {
+            placement = [
+                "Bed ko main feature wall ke sath place karo, door ke bilkul samne nahi.",
+                "Wardrobe ko side wall par rakho jahan walking space block na ho.",
+                "Side table bed ke right/left side par rakho, lamp uske upar place karo.",
+                "Agar room small hai to bed ke neeche storage ya wall shelves use karo."
+            ];
+            color = [
+                "Cream, warm beige ya off-white wall color bedroom ko spacious aur premium banata hai.",
+                "Furniture ke liye light wood, white ya beige tone use karo.",
+                "Luxury touch ke liye gold/black small accents add kar sakti ho."
+            ];
+            lighting = [
+                "Bed ke dono sides warm lamps use karo.",
+                "Ceiling light soft warm rakho.",
+                "Headboard ke peeche LED strip optional premium effect de sakti hai."
+            ];
+            storage = [
+                "Wardrobe sliding door wala better rahega agar space kam hai.",
+                "Floating shelves wall par add karo.",
+                "Storage baskets ya under-bed storage use karo."
+            ];
+            decor = [
+                "Rug bed ke lower half ke neeche place karo.",
+                "2-3 cushions aur simple wall art enough hain.",
+                "Curtains wall color ke matching light shade mein rakho."
+            ];
+            mistakes = [
+                "Oversized bed avoid karo.",
+                "Wardrobe ko window ya door ke samne mat rakho.",
+                "Too many decor pieces se room crowded lagega."
+            ];
+        } else if (room === "Kitchen") {
+            placement = [
+                "Sink, stove aur counter ko practical working triangle mein rakho.",
+                "Cabinets wall side par rakho taake center walking space open rahe.",
+                "Daily-use items counter ke paas aur heavy storage lower cabinets mein rakho."
+            ];
+            color = [
+                "White/grey cabinets modern kitchen ke liye safe choice hain.",
+                "Wooden counter ya marble texture premium look deta hai.",
+                "Backsplash neutral rakho taake kitchen clean lage."
+            ];
+            lighting = [
+                "Counter ke neeche task lights add karo.",
+                "Ceiling bright white/warm light mix use karo.",
+                "Cabinet strip light modern effect degi."
+            ];
+            storage = [
+                "Wall cabinets storage ke liye best hain.",
+                "Pull-out drawers small kitchen ke liye useful hain.",
+                "Corner shelves dead space use karne ke liye add karo."
+            ];
+            decor = [
+                "Counter par zyada decor na rakho.",
+                "Small plant ya tray enough hai.",
+                "Appliances ko grouped rakho."
+            ];
+            mistakes = [
+                "Counter ko cluttered mat karo.",
+                "Ventilation ignore mat karo.",
+                "Dark colors small kitchen mein avoid karo."
+            ];
+        } else if (room === "Bathroom") {
+            placement = [
+                "Vanity aur mirror ko entrance ke opposite ya side wall par rakho.",
+                "Shower area ko visually separate rakho.",
+                "Storage wall-mounted rakho taake floor clean lage."
+            ];
+            color = [
+                "Light tiles bathroom ko bigger aur clean dikhati hain.",
+                "White vanity with black/gold fixtures premium lagti hai.",
+                "Mirror wall ko bright rakho."
+            ];
+            lighting = [
+                "Mirror ke around warm light use karo.",
+                "Ceiling light bright rakho.",
+                "Shower zone mein moisture-safe lighting use karo."
+            ];
+            storage = [
+                "Vanity drawers useful rahenge.",
+                "Wall shelf towels/products ke liye add karo.",
+                "Tall cabinet only if space allow karta ho."
+            ];
+            decor = [
+                "Minimal plant, towel set aur soap tray enough hain.",
+                "Too many accessories avoid karo."
+            ];
+            mistakes = [
+                "Wood without waterproof finish avoid karo.",
+                "Vanity ko cluttered mat rakho.",
+                "Poor ventilation avoid karo."
+            ];
+        } else if (room === "Living Room" || room === "TV Lounge") {
+            placement = [
+                "Sofa ko TV wall ya focal wall ke samne rakho.",
+                "Coffee table sofa ke center mein rakho but walking gap choro.",
+                "Rug seating zone ko define karega.",
+                "Floor lamp empty corner mein add karo."
+            ];
+            color = [
+                "Neutral walls + warm wood furniture best combination hai.",
+                "Cream/grey sofa safe aur modern lagta hai.",
+                "Accent color cushions, art ya decor se add karo."
+            ];
+            lighting = [
+                "Warm ceiling light + floor lamp use karo.",
+                "TV wall ke peeche soft backlight premium look degi.",
+                "Reading corner mein task lamp add karo."
+            ];
+            storage = [
+                "Media console TV ke neeche rakho.",
+                "Wall shelves decor + storage dono ke liye use karo.",
+                "Hidden storage coffee table helpful rahega."
+            ];
+            decor = [
+                "Plant, cushions, wall art aur decor tray use karo.",
+                "Rug ka size sofa se proportion mein rakho."
+            ];
+            mistakes = [
+                "Sofa ko door pathway mein mat rakho.",
+                "Coffee table oversized mat lo.",
+                "Too many colors use na karo."
+            ];
+        } else {
+            placement = [
+                "Jo furniture tum mention kar rahi ho usko pehle room ke function ke hisaab se group karo.",
+                "Main furniture ko wall ke sath rakho, center walking space open choro.",
+                "Chair/table type items ko light source ke near rakho.",
+                "Storage items ko side wall ya corner mein rakho.",
+                "Decor items last mein add karo, pehle layout clear karo."
+            ];
+            color = [
+                "Neutral base color use karo: cream, off-white, beige ya light grey.",
+                "Agar furniture dark hai to wall light rakho.",
+                "Agar furniture light hai to one accent wall add kar sakti ho."
+            ];
+            lighting = [
+                "General ceiling light zaroori hai.",
+                "Task light working/study area ke liye add karo.",
+                "Accent light room ko premium look deti hai."
+            ];
+            storage = [
+                "Vertical storage use karo.",
+                "Closed cabinets clutter hide karti hain.",
+                "Multi-purpose furniture use karo."
+            ];
+            decor = [
+                "Minimal decor best rahega.",
+                "Plants and rug room ko complete karte hain."
+            ];
+            mistakes = [
+                "Walking path block mat karo.",
+                "Oversized furniture avoid karo.",
+                "Mixed themes avoid karo."
+            ];
+        }
+
+        return "AI Designer Answer\n\n" +
+            "Detected area: " + room + "\n" +
+            "Style direction: " + style + "\n" +
+            "Budget direction: " + budget + "\n" +
+            "Main needs: " + needs.join(", ") + "\n\n" +
+            "1) Furniture Placement\n- " + placement.join("\n- ") + "\n\n" +
+            "2) Color / Wall Suggestion\n- " + color.join("\n- ") + "\n\n" +
+            "3) Lighting Suggestion\n- " + lighting.join("\n- ") + "\n\n" +
+            "4) Storage Solution\n- " + storage.join("\n- ") + "\n\n" +
+            "5) Decor Suggestion\n- " + decor.join("\n- ") + "\n\n" +
+            "6) Mistakes To Avoid\n- " + mistakes.join("\n- ") + "\n\n" +
+            "Final Recommendation:\nPlace the biggest furniture first, then check walking space, then add storage, lighting and decor.";
+    }
+
+    function askCustomChatbot() {
+        const promptBox = document.getElementById("aiPrompt");
+        const message = promptBox.value.trim();
+
+        if (!message) {
+            alert("Please write your custom room design question first.");
+            return;
+        }
+
+        addChatMessage(message, "user");
+
+        const answer = buildCustomChatbotAnswer(message);
+
+        addChatMessage(answer, "bot");
+
+        const box = document.getElementById("aiReportBox");
+        if (box) {
+            box.innerHTML =
+                "<div class='designer-card-wide'>" +
+                "<h5>Custom AI Chatbot Suggestion</h5>" +
+                "<p><strong>Your Question:</strong> " + message + "</p>" +
+                "<p style='white-space:pre-line;'>" + answer + "</p>" +
+                "</div>";
+        }
+
+        latestAIReportText += "\n\nCustom Question:\n" + message + "\n\nAI Answer:\n" + answer;
+    }
+
+
+    function generateAISuggestions() {
+        const roomType = document.getElementById("aiRoomType").value;
+        const style = document.getElementById("aiStyle").value;
+        const budget = document.getElementById("aiBudget").value;
+        const prompt = document.getElementById("aiPrompt").value.trim();
+
+        if (!prompt) {
+            alert("Please write your room requirement first.");
+            return;
+        }
+
+        addChatMessage(prompt, "user");
+
+        const detailedReply = createDetailedDesignerReply(prompt + " " + roomType + " " + style + " " + budget);
+        addChatMessage(detailedReply, "bot");
+
+        const data = getAISuggestionData(roomType, style, budget, prompt);
+
+        let reportTop = "";
+        if (typeof buildFullRoomPreview === "function") {
+            reportTop = buildFullRoomPreview(roomType, style);
+        }
+
+        const report =
+            reportTop +
+            "<div class='designer-card-wide'>" +
+            "<h5>AI Chatbot Detailed Suggestion</h5>" +
+            "<p style='white-space:pre-line;'>" + detailedReply + "</p>" +
+            "</div>" +
+
+            "<div class='ai-report-card'>" +
+            "<h5>Design Summary</h5>" +
+            "<p><strong>Room:</strong> " + roomType + "</p>" +
+            "<p><strong>Style:</strong> " + style + "</p>" +
+            "<p><strong>Budget:</strong> " + budget + "</p>" +
+            "<p><strong>Requirement:</strong> " + prompt + "</p>" +
+            "</div>" +
+
+            "<div class='ai-report-card'>" +
+            "<h5>Recommended Furniture</h5>" +
+            listHtml(data.furniture) +
+            "</div>" +
+
+            "<div class='ai-report-card'>" +
+            "<h5>Color Palette</h5>" +
+            "<p>Suggested colors according to selected style.</p>" +
+            paletteHtml(data.colors) +
+            "</div>" +
+
+            "<div class='ai-report-card'>" +
+            "<h5>Lighting Plan</h5>" +
+            listHtml(data.lighting) +
+            "</div>" +
+
+            "<div class='ai-report-card'>" +
+            "<h5>Decor Suggestions</h5>" +
+            listHtml(data.decor) +
+            "</div>";
+
+        document.getElementById("aiReportBox").innerHTML = report;
+
+        latestAIReportText =
+            "AI Room Designer Chat Report\n\n" +
+            "Room: " + roomType + "\n" +
+            "Style: " + style + "\n" +
+            "Budget: " + budget + "\n" +
+            "Requirement: " + prompt + "\n\n" +
+            detailedReply;
+    }
+
+    function quickAI(text) {
+        const input = document.getElementById("chatFollowUp");
+        input.value = text;
+        sendAIChatMessage();
+    }
+
+
+    function detectRoomFromText(message) {
+        const m = message.toLowerCase();
+
+        if (m.includes("kitchen")) return "Kitchen";
+        if (m.includes("bathroom") || m.includes("washroom")) return "Bathroom";
+        if (m.includes("living")) return "Living Room";
+        if (m.includes("tv")) return "TV Lounge";
+        if (m.includes("balcony")) return "Balcony";
+        if (m.includes("garage")) return "Garage";
+        if (m.includes("dining")) return "Dining Room";
+        if (m.includes("bedroom") || m.includes("bed")) return "Bedroom";
+
+        const select = document.getElementById("aiRoomType");
+        return select ? select.value : "Room";
+    }
+
+    function detectStyleFromText(message) {
+        const m = message.toLowerCase();
+
+        if (m.includes("luxury") || m.includes("premium")) return "Luxury";
+        if (m.includes("minimal")) return "Minimal";
+        if (m.includes("classic")) return "Classic";
+        if (m.includes("cozy") || m.includes("warm")) return "Cozy";
+        if (m.includes("modern")) return "Modern";
+
+        const select = document.getElementById("aiStyle");
+        return select ? select.value : "Modern";
+    }
+
+    function detectBudgetFromText(message) {
+        const m = message.toLowerCase();
+
+        if (m.includes("low") || m.includes("cheap") || m.includes("budget")) return "Low/Medium Budget";
+        if (m.includes("luxury") || m.includes("premium")) return "Premium Budget";
+
+        const select = document.getElementById("aiBudget");
+        return select ? select.value : "Medium Budget";
+    }
+
+    function mentionedFurniture(message) {
+        const m = message.toLowerCase();
+        const list = [];
+
+        if (m.includes("bed")) list.push("bed");
+        if (m.includes("wardrobe") || m.includes("almari")) list.push("wardrobe");
+        if (m.includes("sofa")) list.push("sofa");
+        if (m.includes("chair")) list.push("chair");
+        if (m.includes("table")) list.push("table");
+        if (m.includes("lamp") || m.includes("light")) list.push("lamp/lighting");
+        if (m.includes("rug") || m.includes("carpet")) list.push("rug");
+        if (m.includes("plant")) list.push("plant");
+        if (m.includes("storage") || m.includes("shelf")) list.push("storage shelves");
+
+        return list.length ? list.join(", ") : "main furniture according to selected room";
+    }
+
+    function createDetailedDesignerReply(message) {
+        const room = detectRoomFromText(message);
+        const style = detectStyleFromText(message);
+        const budget = detectBudgetFromText(message);
+        const furniture = mentionedFurniture(message);
+        const lower = message.toLowerCase();
+
+        let focus = "balanced layout and clean movement space";
+        if (lower.includes("small")) focus = "small room space saving layout";
+        if (lower.includes("storage")) focus = "extra storage without overcrowding";
+        if (lower.includes("light") || lower.includes("warm")) focus = "warm layered lighting";
+        if (lower.includes("color") || lower.includes("cream")) focus = "soft color palette and matching furniture";
+        if (lower.includes("luxury")) focus = "luxury look with premium accents";
+
+        let placement = [];
+        let colors = [];
+        let lighting = [];
+        let avoid = [];
+
+        if (room === "Bedroom") {
+            placement = [
+                "Place the bed on the main feature wall, not directly blocking the door.",
+                "Keep side tables on both sides of the bed if space allows.",
+                "Place wardrobe on side wall; keep at least 2.5 ft walking space in front.",
+                "Use rug under lower half of bed to make the room look complete."
+            ];
+            colors = ["Cream or warm beige walls", "Wooden texture furniture", "White bedding", "Gold/black small accents for luxury"];
+            lighting = ["Two warm bedside lamps", "Soft ceiling light", "Optional LED behind headboard"];
+            avoid = ["Do not place wardrobe in front of window", "Do not use oversized bed in small room", "Do not mix too many dark colors"];
+        } else if (room === "Kitchen") {
+            placement = [
+                "Keep sink, stove and counter in a practical working triangle.",
+                "Use wall cabinets for vertical storage.",
+                "Keep central walking area clear.",
+                "Use counter corner for small appliances only."
+            ];
+            colors = ["White or light grey cabinets", "Wooden/stone counter", "Warm under-cabinet light"];
+            lighting = ["Under-cabinet task lights", "Bright ceiling light", "Warm accent strip"];
+            avoid = ["Do not block counter with decor", "Do not use dark cabinets in a tiny kitchen", "Do not ignore ventilation"];
+        } else if (room === "Bathroom") {
+            placement = [
+                "Place vanity and mirror on one clean wall.",
+                "Separate shower zone visually with glass partition concept.",
+                "Use wall storage above or beside vanity.",
+                "Keep floor visually open for clean look."
+            ];
+            colors = ["Light tiles", "White vanity", "Black/gold fixtures", "Soft warm mirror light"];
+            lighting = ["Mirror light", "Ceiling light", "Warm accent near vanity"];
+            avoid = ["Do not use wooden items without waterproof finish", "Do not overcrowd vanity", "Do not keep poor ventilation"];
+        } else if (room === "Living Room" || room === "TV Lounge") {
+            placement = [
+                "Place sofa facing TV wall or main focal wall.",
+                "Keep coffee table centered but leave walking gap around it.",
+                "Use rug to define seating area.",
+                "Place floor lamp or plant in empty corner for balance."
+            ];
+            colors = ["Neutral wall base", "Warm wood furniture", "Cream/grey sofa", "Orange/gold/black accent details"];
+            lighting = ["Floor lamp near sofa", "Warm ceiling light", "TV/back wall accent light"];
+            avoid = ["Do not push all furniture randomly to corners", "Do not block TV view", "Do not use too many decor pieces"];
+        } else {
+            placement = [
+                "Keep main furniture against the strongest wall.",
+                "Use corners for storage or decor.",
+                "Keep center area open for movement.",
+                "Use one focal point so the room does not look messy."
+            ];
+            colors = ["Soft neutral walls", "One accent color", "Matching furniture finish", "Warm decor tones"];
+            lighting = ["General ceiling light", "Task light", "Accent light for mood"];
+            avoid = ["Do not overcrowd", "Do not block entry", "Do not mix unrelated styles"];
+        }
+
+        return "AI Interior Designer Suggestion\\n\\n" +
+            "Room: " + room + "\\n" +
+            "Style Direction: " + style + "\\n" +
+            "Budget: " + budget + "\\n" +
+            "Detected furniture/need: " + furniture + "\\n" +
+            "Main Focus: " + focus + "\\n\\n" +
+            "1. Furniture Placement\\n- " + placement.join("\\n- ") + "\\n\\n" +
+            "2. Color Palette\\n- " + colors.join("\\n- ") + "\\n\\n" +
+            "3. Lighting Plan\\n- " + lighting.join("\\n- ") + "\\n\\n" +
+            "4. Mistakes To Avoid\\n- " + avoid.join("\\n- ") + "\\n\\n" +
+            "5. Final Advice\\nStart with the biggest furniture first, then add storage, then lighting, then decor. Keep walking space clear.";
+    }
+
+    function updateChatbotReport(message, reply) {
+        const box = document.getElementById("aiReportBox");
+        if (!box) return;
+
+        box.innerHTML =
+            "<div class='designer-card-wide'>" +
+            "<h5>Chatbot Design Advice</h5>" +
+            "<p><strong>Your message:</strong> " + message + "</p>" +
+            "<p style='white-space:pre-line;'>" + reply + "</p>" +
+            "</div>";
+    }
+
+
+    function sendAIChatMessage() {
+        const input = document.getElementById("chatFollowUp");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        addChatMessage(message, "user");
+        input.value = "";
+
+        const answer = buildCustomChatbotAnswer(message);
+
+        addChatMessage(answer, "bot");
+
+        const box = document.getElementById("aiReportBox");
+        if (box) {
+            box.innerHTML =
+                "<div class='designer-card-wide'>" +
+                "<h5>Chatbot Follow-up Suggestion</h5>" +
+                "<p><strong>Your Message:</strong> " + message + "</p>" +
+                "<p style='white-space:pre-line;'>" + answer + "</p>" +
+                "</div>";
+        }
+
+        latestAIReportText += "\\n\\nFollow-up Question:\\n" + message + "\\n\\nAI Answer:\\n" + answer;
+    }
+
+    function downloadAIReport() {
+        if (!latestAIReportText) {
+            alert("Please generate AI suggestions first.");
+            return;
+        }
+
+        const blob = new Blob([latestAIReportText], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ai-room-designer-report.txt";
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+
+    const furnitureItems = [
+        // Main common direct files
+        { name: "Sofa", path: "/images/ar-furniture/sofa.png", width: 230, roomSet: "all", category: "Living", use: "Main seating for room design.", tip: "Place sofa facing the main wall or TV wall." },
+        { name: "Bed", path: "/images/ar-furniture/bed.png", width: 260, roomSet: "all", category: "Bedroom", use: "Main bedroom furniture.", tip: "Place bed on the main feature wall." },
+        { name: "Chair", path: "/images/ar-furniture/chair.png", width: 160, roomSet: "all", category: "Living", use: "Accent seating.", tip: "Place chair near side table or corner." },
+        { name: "Coffee Table", path: "/images/ar-furniture/coffee-table.png", width: 170, roomSet: "all", category: "Living", use: "Center table.", tip: "Place coffee table in front of sofa." },
+        { name: "Side Table", path: "/images/ar-furniture/side-table.png", width: 120, roomSet: "all", category: "Bedroom", use: "Side storage.", tip: "Place beside bed or sofa." },
+        { name: "Rug", path: "/images/ar-furniture/rug.png", width: 300, roomSet: "all", category: "Decor", use: "Defines room zone.", tip: "Place rug under main furniture." },
+        { name: "Floor Lamp", path: "/images/ar-furniture/floor-lamp.png", width: 130, roomSet: "all", category: "Lighting", use: "Accent lighting.", tip: "Place in empty corner." },
+        { name: "Table Lamp", path: "/images/ar-furniture/table-lamp.png", width: 100, roomSet: "all", category: "Lighting", use: "Warm side light.", tip: "Place on table." },
+        { name: "Plant", path: "/images/ar-furniture/plant.png", width: 130, roomSet: "all", category: "Decor", use: "Decor element.", tip: "Place near window or corner." },
+        { name: "Bookshelf", path: "/images/ar-furniture/bookshelf.png", width: 180, roomSet: "all", category: "Storage", use: "Storage unit.", tip: "Place along side wall." },
+        { name: "Wardrobe", path: "/images/ar-furniture/wardrobe.png", width: 210, roomSet: "all", category: "Storage", use: "Storage furniture.", tip: "Place on side wall." },
+        { name: "Ottoman", path: "/images/ar-furniture/ottoman.png", width: 135, roomSet: "all", category: "Decor", use: "Extra seat.", tip: "Place near sofa or bed." },
+
+        // Living Room Set folder
+        { name: "Living Sofa", path: "/images/ar-furniture/living-room-set/sofa.png", width: 260, roomSet: "living-room-set", category: "Living", use: "Living room sofa.", tip: "Place facing TV or main wall." },
+        { name: "Living Chair", path: "/images/ar-furniture/living-room-set/chair.png", width: 165, roomSet: "living-room-set", category: "Living", use: "Accent chair.", tip: "Place near sofa corner." },
+        { name: "Living Coffee Table", path: "/images/ar-furniture/living-room-set/coffee-table.png", width: 185, roomSet: "living-room-set", category: "Living", use: "Center table.", tip: "Place center of sofa zone." },
+        { name: "Living Rug", path: "/images/ar-furniture/living-room-set/rug.png", width: 320, roomSet: "living-room-set", category: "Decor", use: "Living rug.", tip: "Place under sofa area." },
+        { name: "Living Floor Lamp", path: "/images/ar-furniture/living-room-set/floor-lamp.png", width: 130, roomSet: "living-room-set", category: "Lighting", use: "Floor lamp.", tip: "Place corner lighting." },
+        { name: "Living Plant", path: "/images/ar-furniture/living-room-set/plant.png", width: 130, roomSet: "living-room-set", category: "Decor", use: "Indoor plant.", tip: "Place near window." },
+        { name: "Living Bookshelf", path: "/images/ar-furniture/living-room-set/bookshelf.png", width: 180, roomSet: "living-room-set", category: "Storage", use: "Display storage.", tip: "Place on side wall." },
+        { name: "Living Ottoman", path: "/images/ar-furniture/living-room-set/ottoman.png", width: 135, roomSet: "living-room-set", category: "Decor", use: "Extra seating.", tip: "Place near sofa." },
+        { name: "Wall Clock", path: "/images/ar-furniture/living-room-set/wall-clock.png", width: 95, roomSet: "living-room-set", category: "Decor", use: "Wall decor.", tip: "Place on empty wall." },
+
+        // Bedroom Set folder
+        { name: "Bedroom Bed", path: "/images/ar-furniture/bedroom-set/bed.png", width: 280, roomSet: "bedroom-set", category: "Bedroom", use: "Main bed.", tip: "Place on feature wall." },
+        { name: "Bedroom Side Table", path: "/images/ar-furniture/bedroom-set/side-table.png", width: 125, roomSet: "bedroom-set", category: "Bedroom", use: "Bedside table.", tip: "Place beside bed." },
+        { name: "Bedroom Table Lamp", path: "/images/ar-furniture/bedroom-set/table-lamp.png", width: 95, roomSet: "bedroom-set", category: "Lighting", use: "Bedside lamp.", tip: "Place on side table." },
+        { name: "Bedroom Wardrobe", path: "/images/ar-furniture/bedroom-set/wardrobe.png", width: 230, roomSet: "bedroom-set", category: "Storage", use: "Wardrobe.", tip: "Place side wall." },
+        { name: "Bedroom Rug", path: "/images/ar-furniture/bedroom-set/rug.png", width: 320, roomSet: "bedroom-set", category: "Decor", use: "Bedroom rug.", tip: "Place under bed area." },
+        { name: "Bedroom Mirror", path: "/images/ar-furniture/bedroom-set/mirror.png", width: 130, roomSet: "bedroom-set", category: "Decor", use: "Mirror.", tip: "Place side wall." },
+        { name: "Bedroom Bench", path: "/images/ar-furniture/bedroom-set/bench.png", width: 190, roomSet: "bedroom-set", category: "Bedroom", use: "Bench.", tip: "Place at bed end." },
+        { name: "Bedroom Plant", path: "/images/ar-furniture/bedroom-set/plant.png", width: 120, roomSet: "bedroom-set", category: "Decor", use: "Plant.", tip: "Place in corner." },
+
+        // Kitchen Set folder
+        { name: "Kitchen Cabinet", path: "/images/ar-furniture/kitchen-set/wardrobe.png", width: 220, roomSet: "kitchen-set", category: "Storage", use: "Cabinet/storage.", tip: "Place wall side." },
+        { name: "Kitchen Counter", path: "/images/ar-furniture/kitchen-set/side-table.png", width: 170, roomSet: "kitchen-set", category: "Kitchen", use: "Counter concept.", tip: "Place against wall." },
+        { name: "Kitchen Table", path: "/images/ar-furniture/kitchen-set/desk.png", width: 210, roomSet: "kitchen-set", category: "Kitchen", use: "Kitchen table/island.", tip: "Place center with walking space." },
+        { name: "Kitchen Plant", path: "/images/ar-furniture/kitchen-set/plant.png", width: 115, roomSet: "kitchen-set", category: "Decor", use: "Kitchen decor.", tip: "Place corner/counter." },
+        { name: "Kitchen Light", path: "/images/ar-furniture/kitchen-set/table-lamp.png", width: 95, roomSet: "kitchen-set", category: "Lighting", use: "Light decor.", tip: "Use for warm light." },
+        { name: "Kitchen Shelf", path: "/images/ar-furniture/kitchen-set/bookshelf.png", width: 180, roomSet: "kitchen-set", category: "Storage", use: "Open shelf.", tip: "Place side wall." },
+
+        // TV Lounge Set folder
+        { name: "TV Lounge Sofa", path: "/images/ar-furniture/tv-lounge-set/sofa.png", width: 260, roomSet: "tv-lounge-set", category: "Living", use: "TV sofa.", tip: "Face the TV wall." },
+        { name: "TV Coffee Table", path: "/images/ar-furniture/tv-lounge-set/coffee-table.png", width: 185, roomSet: "tv-lounge-set", category: "Living", use: "Coffee table.", tip: "Place center." },
+        { name: "TV Rug", path: "/images/ar-furniture/tv-lounge-set/rug.png", width: 320, roomSet: "tv-lounge-set", category: "Decor", use: "Rug.", tip: "Place under seating." },
+        { name: "TV Floor Lamp", path: "/images/ar-furniture/tv-lounge-set/floor-lamp.png", width: 130, roomSet: "tv-lounge-set", category: "Lighting", use: "Lamp.", tip: "Place side of sofa." },
+        { name: "TV Plant", path: "/images/ar-furniture/tv-lounge-set/plant.png", width: 125, roomSet: "tv-lounge-set", category: "Decor", use: "Plant.", tip: "Place corner." },
+        { name: "TV Console", path: "/images/ar-furniture/tv-lounge-set/wardrobe.png", width: 230, roomSet: "tv-lounge-set", category: "Storage", use: "Console/storage.", tip: "Place below TV wall." },
+        { name: "TV Bookshelf", path: "/images/ar-furniture/tv-lounge-set/bookshelf.png", width: 180, roomSet: "tv-lounge-set", category: "Storage", use: "Shelf.", tip: "Place side wall." },
+
+        // Drawing Room Set folder
+        { name: "Drawing Sofa", path: "/images/ar-furniture/drawing-room-set/white-sofa-2.png", width: 260, roomSet: "drawing-room-set", category: "Living", use: "Formal sofa.", tip: "Place as main seating." },
+        { name: "Drawing Chair", path: "/images/ar-furniture/drawing-room-set/armless-chair.png", width: 160, roomSet: "drawing-room-set", category: "Living", use: "Formal chair.", tip: "Place opposite sofa." },
+        { name: "Drawing Center Table", path: "/images/ar-furniture/drawing-room-set/wood-coffee-table-2.png", width: 190, roomSet: "drawing-room-set", category: "Living", use: "Center table.", tip: "Place between seating." },
+        { name: "Drawing Console", path: "/images/ar-furniture/drawing-room-set/console-table.png", width: 210, roomSet: "drawing-room-set", category: "Storage", use: "Console table.", tip: "Place on wall side." },
+        { name: "Drawing Mirror", path: "/images/ar-furniture/drawing-room-set/mirror.png", width: 130, roomSet: "drawing-room-set", category: "Decor", use: "Mirror decor.", tip: "Place above console." },
+        { name: "Drawing Lamp", path: "/images/ar-furniture/drawing-room-set/table-lamp.png", width: 95, roomSet: "drawing-room-set", category: "Lighting", use: "Table lamp.", tip: "Place on console/side table." },
+        { name: "Drawing Rug", path: "/images/ar-furniture/drawing-room-set/rug-2.png", width: 320, roomSet: "drawing-room-set", category: "Decor", use: "Rug.", tip: "Place in seating zone." },
+        { name: "Drawing Plant", path: "/images/ar-furniture/drawing-room-set/plant.png", width: 125, roomSet: "drawing-room-set", category: "Decor", use: "Plant.", tip: "Place in corner." },
+
+        // Bathroom Set folder
+        { name: "Bathroom Mirror", path: "/images/ar-furniture/bathroom-set/mirror.png", width: 130, roomSet: "bathroom-set", category: "Bathroom", use: "Mirror.", tip: "Place above vanity." },
+        { name: "Bathroom Storage", path: "/images/ar-furniture/bathroom-set/wardrobe.png", width: 190, roomSet: "bathroom-set", category: "Storage", use: "Storage unit.", tip: "Place side wall." },
+        { name: "Bathroom Plant", path: "/images/ar-furniture/bathroom-set/plant.png", width: 115, roomSet: "bathroom-set", category: "Decor", use: "Plant.", tip: "Place near vanity/corner." },
+        { name: "Bathroom Side Unit", path: "/images/ar-furniture/bathroom-set/side-table.png", width: 130, roomSet: "bathroom-set", category: "Bathroom", use: "Vanity/support.", tip: "Place wall side." },
+        { name: "Bathroom Light", path: "/images/ar-furniture/bathroom-set/table-lamp.png", width: 90, roomSet: "bathroom-set", category: "Lighting", use: "Lighting.", tip: "Place near mirror." },
+
+        // Balcony Set folder
+        { name: "Balcony Chair", path: "/images/ar-furniture/balcony-set/chair.png", width: 160, roomSet: "balcony-set", category: "Balcony", use: "Outdoor chair.", tip: "Place side/corner." },
+        { name: "Balcony Table", path: "/images/ar-furniture/balcony-set/side-table.png", width: 130, roomSet: "balcony-set", category: "Balcony", use: "Tea table.", tip: "Place between chairs." },
+        { name: "Balcony Plant", path: "/images/ar-furniture/balcony-set/plant.png", width: 125, roomSet: "balcony-set", category: "Decor", use: "Plant.", tip: "Place corner." },
+        { name: "Balcony Rug", path: "/images/ar-furniture/balcony-set/rug-2.png", width: 300, roomSet: "balcony-set", category: "Decor", use: "Outdoor rug.", tip: "Place seating area." },
+        { name: "Balcony Pouf", path: "/images/ar-furniture/balcony-set/pouf.png", width: 130, roomSet: "balcony-set", category: "Balcony", use: "Extra seat.", tip: "Place near chair." },
+        { name: "Balcony Light", path: "/images/ar-furniture/balcony-set/table-lamp.png", width: 90, roomSet: "balcony-set", category: "Lighting", use: "Outdoor warm light.", tip: "Place on table." }
+    ];
+
+    let cameraStream = null;
+    let selectedItem = null;
+    let itemCounter = 0;
+    let highestZ = 10;
+    let hasRoomImage = false;
+    let currentRoomSet = "all";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        renderFurnitureLibrary();
+        setStatus("Ready. Add room image from camera or gallery.");
+    });
+
+    function getFurnitureSrc(item) {
+        return item.path || ("/images/ar-furniture/" + item.file);
+    }
+
+    function renderFurnitureLibrary() {
+        const library = document.getElementById("furnitureLibrary");
+        library.innerHTML = "";
+
+        const filteredItems = currentRoomSet === "all"
+            ? furnitureItems.filter(item => item.roomSet === "all")
+            : furnitureItems.filter(item => item.roomSet === currentRoomSet);
+
+        filteredItems.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "furniture-card";
+            card.onclick = function () {
+                updateSelectedInfo(item);
+                addFurnitureToRoom(item);
+            };
+
+            card.innerHTML =
+                "<img src='" + getFurnitureSrc(item) + "' alt='" + item.name + "' onerror='this.style.opacity=0.25; this.alt=\"Image Missing\"' />" +
+                "<span>" + item.name + "</span>";
+
+            library.appendChild(card);
+        });
+    }
+
+    function selectRoomSet(roomSet, btn) {
+        currentRoomSet = roomSet;
+
+        document.querySelectorAll(".category-tab").forEach(tab => tab.classList.remove("active"));
+
+        if (btn) {
+            btn.classList.add("active");
+        }
+
+        renderFurnitureLibrary();
+
+        const name = roomSet === "all" ? "All Common Furniture" : roomSet.replaceAll("-", " ");
+        setStatus("Room set selected: " + name + ". Ab is folder ki items show ho rahi hain.");
+    }
+
+    function filterFurniture(category, btn) {
+        selectRoomSet(category, btn);
+    }
+
+    function updateSelectedInfo(item) {
+        const box = document.getElementById("selectedInfoCard");
+
+        if (!box) return;
+
+        box.innerHTML =
+            "<h5>" + item.name + "</h5>" +
+            "<p><strong>Category:</strong> " + item.category + "</p>" +
+            "<p><strong>Use:</strong> " + item.use + "</p>" +
+            "<p><strong>Placement Tip:</strong> " + item.tip + "</p>";
+    }
+
+    function setStatus(message) {
+        const status = document.getElementById("statusLine");
+        if (status) {
+            status.innerText = message;
+        }
+    }
+
+    async function startCamera() {
+        try {
+            const video = document.getElementById("cameraVideo");
+            const placeholder = document.getElementById("cameraPlaceholder");
+
+            cameraStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "environment" },
+                audio: false
+            });
+
+            video.srcObject = cameraStream;
+            video.style.display = "block";
+            placeholder.style.display = "none";
+
+            setStatus("Camera opened. Point camera towards room and click Capture.");
+        } catch (error) {
+            setStatus("Camera could not open. Please use Upload From Gallery option.");
+            alert("Camera permission denied or unavailable. Please upload room image from gallery.");
+        }
+    }
+
+    function stopCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+
+        const video = document.getElementById("cameraVideo");
+        const placeholder = document.getElementById("cameraPlaceholder");
+
+        video.style.display = "none";
+        placeholder.style.display = "block";
+
+        setStatus("Camera stopped.");
+    }
+
+    function captureRoomPhoto() {
+        const video = document.getElementById("cameraVideo");
+
+        if (!cameraStream || video.videoWidth === 0) {
+            alert("Please open camera first.");
+            return;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        setRoomBackground(canvas.toDataURL("image/png"));
+        setStatus("Room photo captured. Now add furniture from library.");
+    }
+
+    function uploadRoomImage(event) {
+        const file = event.target.files[0];
+
+        if (!file) return;
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            setRoomBackground(e.target.result);
+            setStatus("Gallery room image uploaded. Now add furniture from library.");
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    function setRoomBackground(src) {
+        const bg = document.getElementById("roomBackground");
+        const empty = document.getElementById("roomEmpty");
+
+        bg.src = src;
+        bg.style.display = "block";
+        empty.style.display = "none";
+        hasRoomImage = true;
+    }
+
+    function addFurnitureToRoom(item) {
+        if (!hasRoomImage) {
+            alert("Please capture or upload room image first.");
+            return;
+        }
+
+        const stage = document.getElementById("roomStage");
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "placed-item";
+        wrapper.dataset.rotation = "0";
+        wrapper.dataset.scale = "1";
+        wrapper.dataset.flip = "1";
+        wrapper.dataset.name = item.name;
+        wrapper.dataset.src = getFurnitureSrc(item);
+        wrapper.id = "placedItem_" + (++itemCounter);
+        wrapper.style.width = item.width + "px";
+        wrapper.style.left = "38%";
+        wrapper.style.top = "55%";
+        wrapper.style.zIndex = ++highestZ;
+
+        wrapper.innerHTML =
+            "<img src='" + getFurnitureSrc(item) + "' alt='" + item.name + "' />" +
+            "<span class='item-tag'>" + item.name + "</span>";
+
+        stage.appendChild(wrapper);
+
+        makeItemDraggable(wrapper);
+        selectItem(wrapper);
+
+        setStatus(item.name + " added. Tip: " + (item.tip || "Drag, resize and rotate for best placement."));
+    }
+
+    function makeItemDraggable(el) {
+        let startX = 0;
+        let startY = 0;
+        let startLeft = 0;
+        let startTop = 0;
+        let dragging = false;
+
+        el.addEventListener("pointerdown", function (e) {
+            e.preventDefault();
+            selectItem(el);
+
+            dragging = true;
+            el.setPointerCapture(e.pointerId);
+
+            startX = e.clientX;
+            startY = e.clientY;
+            startLeft = el.offsetLeft;
+            startTop = el.offsetTop;
+        });
+
+        el.addEventListener("pointermove", function (e) {
+            if (!dragging) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            el.style.left = (startLeft + dx) + "px";
+            el.style.top = (startTop + dy) + "px";
+        });
+
+        el.addEventListener("pointerup", function (e) {
+            dragging = false;
+            try { el.releasePointerCapture(e.pointerId); } catch { }
+        });
+    }
+
+    function selectItem(el) {
+        document.querySelectorAll(".placed-item").forEach(item => {
+            item.classList.remove("selected");
+        });
+
+        selectedItem = el;
+        selectedItem.classList.add("selected");
+        selectedItem.style.zIndex = ++highestZ;
+
+        setStatus("Selected: " + selectedItem.dataset.name);
+    }
+
+    document.addEventListener("click", function (e) {
+        const stage = document.getElementById("roomStage");
+
+        if (e.target === stage || e.target.id === "roomBackground") {
+            document.querySelectorAll(".placed-item").forEach(item => item.classList.remove("selected"));
+            selectedItem = null;
+        }
+    });
+
+    function applyTransform(el) {
+        const rotation = parseFloat(el.dataset.rotation || "0");
+        const scale = parseFloat(el.dataset.scale || "1");
+        const flip = parseFloat(el.dataset.flip || "1");
+
+        el.style.transform = "scaleX(" + flip + ") scale(" + scale + ") rotate(" + rotation + "deg)";
+    }
+
+    function resizeSelected(factor) {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        let scale = parseFloat(selectedItem.dataset.scale || "1");
+        scale = Math.max(0.35, Math.min(3.2, scale * factor));
+        selectedItem.dataset.scale = scale.toString();
+
+        applyTransform(selectedItem);
+        setStatus("Size updated.");
+    }
+
+    function rotateSelected(deg) {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        let rotation = parseFloat(selectedItem.dataset.rotation || "0");
+        rotation += deg;
+        selectedItem.dataset.rotation = rotation.toString();
+
+        applyTransform(selectedItem);
+        setStatus("Rotation updated.");
+    }
+
+    function flipSelected() {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        let flip = parseFloat(selectedItem.dataset.flip || "1");
+        flip = flip === 1 ? -1 : 1;
+        selectedItem.dataset.flip = flip.toString();
+
+        applyTransform(selectedItem);
+        setStatus("Furniture flipped.");
+    }
+
+    function deleteSelected() {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        const name = selectedItem.dataset.name;
+        selectedItem.remove();
+        selectedItem = null;
+
+        setStatus(name + " deleted.");
+    }
+
+    function duplicateSelected() {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        const item = {
+            name: selectedItem.dataset.name,
+            file: selectedItem.dataset.src.split("/").pop(),
+            width: selectedItem.offsetWidth
+        };
+
+        addFurnitureToRoom(item);
+
+        if (selectedItem) {
+            selectedItem.style.left = "45%";
+            selectedItem.style.top = "58%";
+        }
+    }
+
+    function bringForward() {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        selectedItem.style.zIndex = ++highestZ;
+        setStatus("Layer moved up.");
+    }
+
+    function sendBackward() {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        let current = parseInt(selectedItem.style.zIndex || "5");
+        selectedItem.style.zIndex = Math.max(3, current - 2);
+        setStatus("Layer moved down.");
+    }
+
+    function centerSelected() {
+        if (!selectedItem) {
+            alert("Please select a furniture item first.");
+            return;
+        }
+
+        selectedItem.style.left = "40%";
+        selectedItem.style.top = "55%";
+        setStatus("Furniture centered.");
+    }
+
+    function clearFurniture() {
+        document.querySelectorAll(".placed-item").forEach(item => item.remove());
+        selectedItem = null;
+        setStatus("All furniture removed.");
+    }
+
+    function resetRoom() {
+        clearFurniture();
+
+        const bg = document.getElementById("roomBackground");
+        const empty = document.getElementById("roomEmpty");
+        const upload = document.getElementById("roomUploadInput");
+
+        bg.src = "";
+        bg.style.display = "none";
+        empty.style.display = "block";
+        upload.value = "";
+        hasRoomImage = false;
+
+        setStatus("Room reset. Add a new room image.");
+    }
+
+    async function exportDesignToDataUrl() {
+        if (!hasRoomImage) {
+            alert("Please add room image first.");
+            return null;
+        }
+
+        const stage = document.getElementById("roomStage");
+        const bg = document.getElementById("roomBackground");
+        const canvas = document.getElementById("exportCanvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = stage.clientWidth;
+        canvas.height = stage.clientHeight;
+
+        ctx.fillStyle = "#eee6dc";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        await drawImageObjectFitContain(ctx, bg, 0, 0, canvas.width, canvas.height);
+
+        const items = Array.from(document.querySelectorAll(".placed-item"))
+            .sort((a, b) => parseInt(a.style.zIndex || "0") - parseInt(b.style.zIndex || "0"));
+
+        for (const item of items) {
+            const img = item.querySelector("img");
+            await drawPlacedItem(ctx, item, img);
+        }
+
+        return canvas.toDataURL("image/png");
+    }
+
+    function loadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+        });
+    }
+
+    async function drawImageObjectFitContain(ctx, imgElement, x, y, width, height) {
+        const img = await loadImage(imgElement.src);
+
+        const imageRatio = img.width / img.height;
+        const boxRatio = width / height;
+
+        let drawWidth = width;
+        let drawHeight = height;
+        let dx = x;
+        let dy = y;
+
+        if (imageRatio > boxRatio) {
+            drawHeight = width / imageRatio;
+            dy = y + (height - drawHeight) / 2;
+        } else {
+            drawWidth = height * imageRatio;
+            dx = x + (width - drawWidth) / 2;
+        }
+
+        ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
+    }
+
+    async function drawPlacedItem(ctx, item, imgElement) {
+        const img = await loadImage(imgElement.src);
+
+        const rect = item.getBoundingClientRect();
+        const stageRect = document.getElementById("roomStage").getBoundingClientRect();
+
+        const x = rect.left - stageRect.left;
+        const y = rect.top - stageRect.top;
+        const width = rect.width;
+        const height = rect.height;
+
+        const rotation = parseFloat(item.dataset.rotation || "0") * Math.PI / 180;
+        const flip = parseFloat(item.dataset.flip || "1");
+
+        ctx.save();
+        ctx.translate(x + width / 2, y + height / 2);
+        ctx.rotate(rotation);
+        ctx.scale(flip, 1);
+        ctx.drawImage(img, -width / 2, -height / 2, width, height);
+        ctx.restore();
+    }
+
+    async function downloadFinalDesign() {
+        const dataUrl = await exportDesignToDataUrl();
+
+        if (!dataUrl) return;
+
+        const link = document.createElement("a");
+        link.href = dataUrl;
+        link.download = "ar-room-furniture-design.png";
+        link.click();
+
+        setStatus("Final room design downloaded.");
+    }
+
+    async function saveFinalDesign() {
+        const dataUrl = await exportDesignToDataUrl();
+
+        if (!dataUrl) return;
+
+        const formData = new FormData();
+        formData.append("designImage", dataUrl);
+        formData.append("selectedFurnitureName", "Multi Furniture AR Room Design");
+        formData.append("selectedFurnitureImage", "");
+        formData.append("aiSuggestion", "Room designed using camera/gallery image and multiple draggable furniture placement.");
+
+        try {
+            const response = await fetch("/Home/SaveRoomDesign", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.requiresLogin) {
+                alert("Please login first to save your room design.");
+                window.location.href = "/Home/Login";
+                return;
+            }
+
+            alert(result.message || "Design saved.");
+            setStatus(result.message || "Design saved.");
+        } catch (error) {
+            alert("Design could not be saved. Please download it instead.");
+            setStatus("Save failed. You can still download the design.");
+        }
+    }
+</script>

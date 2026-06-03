@@ -1,0 +1,270 @@
+﻿@using Microsoft.AspNetCore.Http
+
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var userName = Context.Session.GetString("UserName");
+    var isLoggedIn = !string.IsNullOrWhiteSpace(userName);
+    var isAdminPage = currentAction == "Admin";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>AR Based Interior Design App</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <style>
+        .main-navbar {
+            background: #15191f;
+            padding: 12px 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        .main-brand {
+            font-size: 27px;
+            font-weight: 900;
+            color: #ffffff !important;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .main-brand span {
+            color: #ff7900;
+        }
+
+        .main-nav-link {
+            color: rgba(255,255,255,0.78) !important;
+            font-weight: 700;
+            font-size: 15px;
+            margin: 0 4px;
+            padding: 9px 13px !important;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .main-nav-link:hover,
+        .main-nav-link.active-menu {
+            color: #ffffff !important;
+            background: rgba(255,121,0,0.16);
+        }
+
+        .main-login-btn {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 12px;
+            padding: 8px 16px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .main-login-btn:hover {
+            color: #ffffff;
+            border-color: #ff7900;
+            background: rgba(255,121,0,0.14);
+        }
+
+        .main-register-btn {
+            background: #ff7900;
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 9px 17px;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 14px;
+            box-shadow: 0 10px 20px rgba(255,121,0,0.22);
+            transition: all 0.2s ease;
+        }
+
+        .main-register-btn:hover {
+            color: #ffffff;
+            background: #e86f00;
+        }
+
+        .main-user-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-left: 16px;
+        }
+
+        .main-user-name {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .main-logout-btn {
+            background: #ff7900;
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 9px 16px;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        .main-logout-btn:hover {
+            color: #ffffff;
+            background: #e86f00;
+        }
+
+        @@media screen and (max-width: 991px) {
+            .main-user-box {
+                margin-left: 0;
+                margin-top: 12px;
+                flex-wrap: wrap;
+            }
+
+            .main-login-btn,
+            .main-register-btn,
+            .main-logout-btn {
+                display: inline-block;
+                margin-top: 10px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    @if (!isAdminPage)
+    {
+        <nav class="navbar navbar-expand-lg navbar-dark main-navbar">
+
+            <div class="container">
+
+                <a class="navbar-brand main-brand"
+                   href="/">
+
+                    <span>AR</span> Interior
+
+                </a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbarNav"
+                        aria-controls="navbarNav"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+
+                    <span class="navbar-toggler-icon"></span>
+
+                </button>
+
+                <div class="collapse navbar-collapse"
+                     id="navbarNav">
+
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link @(currentAction == "Index" ? "active-menu" : "")"
+                               href="/">
+                                Home
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link @(currentAction == "Furniture" ? "active-menu" : "")"
+                               href="/Home/Furniture">
+                                Furniture
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link @(currentAction == "ARView" ? "active-menu" : "")"
+                               href="/Home/ARView">
+                                AR View
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link @(currentAction == "Contact" ? "active-menu" : "")"
+                               href="/Home/Contact">
+                                Contact
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link @(currentAction == "Admin" ? "active-menu" : "")"
+                               href="/Home/Admin">
+                                Admin
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    @if (isLoggedIn)
+                    {
+                        <div class="main-user-box">
+
+                            <span class="main-user-name">
+                                Hi, @userName
+                            </span>
+
+                            <a href="/Home/Logout"
+                               class="main-logout-btn">
+                                Logout
+                            </a>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="main-user-box">
+
+                            <a href="/Home/Login"
+                               class="main-login-btn">
+                                Login
+                            </a>
+
+                            <a href="/Home/Register"
+                               class="main-register-btn">
+                                Register
+                            </a>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </nav>
+    }
+
+    <div>
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+</html>

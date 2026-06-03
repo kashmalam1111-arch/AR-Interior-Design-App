@@ -1,0 +1,238 @@
+﻿<style>
+    .auth-pro-page {
+        min-height: calc(100vh - 74px);
+        background: #f4f1ec;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        font-family: Arial, sans-serif;
+    }
+
+    .auth-pro-left {
+        background: linear-gradient(rgba(20, 24, 30, 0.78), rgba(20, 24, 30, 0.78)), url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=80");
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        padding: 60px;
+        color: #ffffff;
+    }
+
+    .auth-pro-brand {
+        max-width: 560px;
+    }
+
+    .auth-pro-badge {
+        display: inline-block;
+        background: rgba(255, 121, 0, 0.18);
+        border: 1px solid rgba(255, 121, 0, 0.45);
+        color: #ffb26b;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 900;
+        margin-bottom: 18px;
+    }
+
+    .auth-pro-brand h1 {
+        font-size: 52px;
+        font-weight: 900;
+        margin-bottom: 14px;
+    }
+
+    .auth-pro-brand p {
+        font-size: 18px;
+        color: rgba(255,255,255,0.82);
+        line-height: 1.7;
+        margin-bottom: 0;
+    }
+
+    .auth-pro-right {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 45px 24px;
+    }
+
+    .auth-pro-card {
+        width: 100%;
+        max-width: 460px;
+        background: #fffaf3;
+        border: 1px solid #e5d8c8;
+        border-radius: 28px;
+        padding: 34px;
+        box-shadow: 0 18px 42px rgba(32,36,42,0.08);
+    }
+
+        .auth-pro-card h2 {
+            font-size: 32px;
+            font-weight: 900;
+            color: #20242a;
+            margin-bottom: 6px;
+        }
+
+        .auth-pro-card .auth-subtitle {
+            color: #68717b;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .auth-pro-card .form-label {
+            font-weight: 900;
+            color: #20242a;
+            margin-bottom: 7px;
+        }
+
+        .auth-pro-card .form-control {
+            height: 52px;
+            border-radius: 15px;
+            border: 1px solid #e0d1be;
+            padding: 12px 15px;
+            background: #ffffff;
+            font-weight: 600;
+        }
+
+            .auth-pro-card .form-control:focus {
+                border-color: #ff7900;
+                box-shadow: 0 0 0 0.2rem rgba(255,121,0,0.12);
+            }
+
+    .auth-pro-btn {
+        background: #ff7900;
+        color: #ffffff;
+        border: none;
+        border-radius: 15px;
+        padding: 13px 24px;
+        font-weight: 900;
+        width: 100%;
+        box-shadow: 0 12px 26px rgba(255,121,0,0.25);
+    }
+
+        .auth-pro-btn:hover {
+            background: #e86f00;
+            color: #ffffff;
+        }
+
+    .auth-pro-link {
+        color: #ff7900;
+        font-weight: 900;
+        text-decoration: none;
+    }
+
+        .auth-pro-link:hover {
+            color: #d96500;
+        }
+
+    .auth-pro-alert {
+        border-radius: 15px;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    @@media screen and (max-width: 900px) {
+        .auth-pro-page {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-pro-left {
+            min-height: 340px;
+            padding: 40px 24px;
+        }
+
+        .auth-pro-brand h1 {
+            font-size: 38px;
+        }
+    }
+</style>
+
+<div class="auth-pro-page">
+
+    <div class="auth-pro-left">
+        <div class="auth-pro-brand">
+            <span class="auth-pro-badge">Create Account</span>
+
+            <h1>AR Interior</h1>
+
+            <p>
+                Register your account and start exploring furniture,
+                AR room previews and saved interior design concepts.
+            </p>
+        </div>
+    </div>
+
+    <div class="auth-pro-right">
+
+        <div class="auth-pro-card">
+
+            <h2>Register</h2>
+
+            <p class="auth-subtitle">
+                Create your design account
+            </p>
+
+            @if (TempData["RegisterError"] != null)
+            {
+                <div class="alert alert-danger auth-pro-alert">
+                    @TempData["RegisterError"]
+                </div>
+            }
+
+            @if (TempData["LogoutMessage"] != null)
+            {
+                <div class="alert alert-success auth-pro-alert">
+                    @TempData["LogoutMessage"]
+                </div>
+            }
+
+            <form asp-controller="Home" asp-action="Register" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+
+                    <input type="text"
+                           name="fullName"
+                           class="form-control"
+                           placeholder="Enter your full name"
+                           required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           placeholder="Enter your email"
+                           required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Create a password"
+                           required />
+                </div>
+
+                <button type="submit" class="auth-pro-btn">
+                    Sign Up
+                </button>
+
+                <p class="text-center mt-4 mb-0">
+                    Already have an account?
+
+                    <a href="/Home/Login" class="auth-pro-link">
+                        Login
+                    </a>
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

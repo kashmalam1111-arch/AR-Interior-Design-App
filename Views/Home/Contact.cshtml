@@ -1,0 +1,317 @@
+﻿@model ARInteriorDesignApp.Models.ContactMessage
+
+<style>
+    .contact-page {
+        background: #f4f1ec;
+        color: #20242a;
+        font-family: Arial, sans-serif;
+    }
+
+    .contact-hero {
+        background: linear-gradient(rgba(20, 24, 30, 0.76), rgba(20, 24, 30, 0.76)), url("https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1600&q=80");
+        background-size: cover;
+        background-position: center;
+        padding: 95px 0;
+        text-align: center;
+        color: #ffffff;
+    }
+
+    .contact-badge {
+        display: inline-block;
+        background: rgba(255, 121, 0, 0.18);
+        border: 1px solid rgba(255, 121, 0, 0.45);
+        color: #ffb26b;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 900;
+        margin-bottom: 16px;
+    }
+
+    .contact-hero h1 {
+        font-size: 52px;
+        font-weight: 900;
+        margin-bottom: 14px;
+    }
+
+    .contact-hero p {
+        max-width: 700px;
+        margin: auto;
+        font-size: 17px;
+        color: rgba(255,255,255,0.82);
+        line-height: 1.7;
+    }
+
+    .contact-section {
+        padding: 65px 0;
+    }
+
+    .contact-info-card,
+    .contact-form-card {
+        background: #fffaf3;
+        border: 1px solid #e5d8c8;
+        border-radius: 26px;
+        padding: 30px;
+        height: 100%;
+        box-shadow: 0 16px 38px rgba(32,36,42,0.07);
+    }
+
+        .contact-info-card h2,
+        .contact-form-card h2 {
+            font-size: 28px;
+            font-weight: 900;
+            color: #20242a;
+            margin-bottom: 10px;
+        }
+
+        .contact-info-card > p,
+        .contact-form-card > p {
+            color: #68717b;
+            line-height: 1.7;
+            margin-bottom: 26px;
+        }
+
+    .contact-item {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        background: #f5ede3;
+        border: 1px solid #e0d1be;
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 14px;
+    }
+
+        .contact-item span {
+            width: 44px;
+            height: 44px;
+            background: #fff0df;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .contact-item h6 {
+            margin: 0 0 4px;
+            font-weight: 900;
+            color: #20242a;
+        }
+
+        .contact-item p {
+            margin: 0;
+            color: #68717b;
+            font-size: 14px;
+        }
+
+    .contact-form-card .form-label {
+        font-weight: 900;
+        color: #20242a;
+        margin-bottom: 7px;
+    }
+
+    .contact-form-card .form-control {
+        border-radius: 15px;
+        border: 1px solid #e0d1be;
+        min-height: 50px;
+        padding: 12px 15px;
+        background: #ffffff;
+        font-weight: 600;
+    }
+
+    .contact-form-card textarea.form-control {
+        min-height: 140px;
+    }
+
+    .contact-form-card .form-control:focus {
+        border-color: #ff7900;
+        box-shadow: 0 0 0 0.2rem rgba(255,121,0,0.12);
+    }
+
+    .contact-submit-btn {
+        background: #ff7900;
+        color: #ffffff;
+        border: none;
+        border-radius: 15px;
+        padding: 13px 24px;
+        font-weight: 900;
+        box-shadow: 0 12px 26px rgba(255,121,0,0.25);
+    }
+
+        .contact-submit-btn:hover {
+            background: #e86f00;
+            color: #ffffff;
+        }
+
+    .contact-alert {
+        border-radius: 15px;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .contact-footer {
+        background: #171b21;
+        color: rgba(255,255,255,0.70);
+        text-align: center;
+        padding: 22px;
+        font-size: 14px;
+    }
+
+    @@media screen and (max-width: 768px) {
+        .contact-hero h1 {
+            font-size: 36px;
+        }
+    }
+</style>
+
+<div class="contact-page">
+
+    <section class="contact-hero">
+        <div class="container">
+            <span class="contact-badge">Contact Support</span>
+
+            <h1>Contact Us</h1>
+
+            <p>
+                Have questions about interior design, furniture selection or AR visualization?
+                Send us a message and our team will respond.
+            </p>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="container">
+
+            <div class="row g-4">
+
+                <div class="col-lg-5">
+                    <div class="contact-info-card">
+
+                        <h2>Get In Touch</h2>
+
+                        <p>
+                            Contact us for furniture selection, room planning,
+                            interior design guidance and AR preview support.
+                        </p>
+
+                        <div class="contact-item">
+                            <span>📧</span>
+                            <div>
+                                <h6>Email</h6>
+                                <p>info@arinterior.com</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <span>📞</span>
+                            <div>
+                                <h6>Phone</h6>
+                                <p>+92 300 1234567</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <span>📍</span>
+                            <div>
+                                <h6>Address</h6>
+                                <p>Interior Design Studio, Pakistan</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="contact-form-card">
+
+                        <h2>Send Us a Message</h2>
+
+                        <p>
+                            Fill the form below and your message will be saved
+                            in the admin dashboard.
+                        </p>
+
+                        @if (TempData["ContactSuccess"] != null)
+                        {
+                            <div class="alert alert-success contact-alert">
+                                @TempData["ContactSuccess"]
+                            </div>
+                        }
+
+                        @if (TempData["ContactError"] != null)
+                        {
+                            <div class="alert alert-danger contact-alert">
+                                @TempData["ContactError"]
+                            </div>
+                        }
+
+                        <form asp-controller="Home" asp-action="Contact" method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+
+                                <input asp-for="Name"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Enter your full name" />
+
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+
+                                <input asp-for="Email"
+                                       type="email"
+                                       class="form-control"
+                                       placeholder="Enter your email address" />
+
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Subject</label>
+
+                                <input asp-for="Subject"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Enter message subject" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Message</label>
+
+                                <textarea asp-for="Message"
+                                          class="form-control"
+                                          placeholder="Write your message here..."></textarea>
+
+                                <span asp-validation-for="Message" class="text-danger small"></span>
+                            </div>
+
+                            <button type="submit" class="contact-submit-btn">
+                                Send Message
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="contact-footer">
+        © 2026 AR Based Interior Design App. All Rights Reserved.
+    </footer>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

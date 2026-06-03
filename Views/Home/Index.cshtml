@@ -1,0 +1,813 @@
+﻿@{
+    var userName = ViewBag.UserName as string;
+}
+
+<style>
+    /* DARK LUXURY HOME PAGE - SAFE UPDATE ONLY FOR VIEWS/HOME/INDEX.CSHTML */
+
+    .navbar {
+        background: #070b0f !important;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        padding: 10px 0 !important;
+    }
+
+    .navbar-brand {
+        font-size: 25px !important;
+        letter-spacing: -0.5px;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 14px !important;
+        padding: 8px 13px !important;
+        border-radius: 10px !important;
+    }
+
+    .navbar .btn {
+        padding: 8px 17px !important;
+        border-radius: 11px !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+    }
+
+    .home-page {
+        background: #070b0f;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        overflow-x: hidden;
+    }
+
+    .home-hero {
+        position: relative;
+        min-height: 610px;
+        background: linear-gradient(90deg, rgba(7,11,15,0.97) 0%, rgba(7,11,15,0.88) 42%, rgba(7,11,15,0.48) 78%, rgba(7,11,15,0.78) 100%), url("https://images.unsplash.com/photo-1600607688969-a5bfcd646154?auto=format&fit=crop&w=1800&q=80");
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        padding: 68px 0 125px;
+    }
+
+        .home-hero::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 180px;
+            background: linear-gradient(180deg, rgba(7,11,15,0) 0%, #070b0f 90%);
+            pointer-events: none;
+        }
+
+    .home-hero-layout {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: 1fr 430px;
+        gap: 46px;
+        align-items: center;
+    }
+
+    .home-hero-box {
+        max-width: 650px;
+    }
+
+    .home-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #ff8a1f;
+        border: 1px solid rgba(255,138,31,0.38);
+        background: rgba(255,138,31,0.10);
+        border-radius: 999px;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.7px;
+        text-transform: uppercase;
+        margin-bottom: 18px;
+    }
+
+    .home-hero h1 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 52px;
+        font-weight: 500;
+        line-height: 1.08;
+        letter-spacing: -1.2px;
+        color: #ffffff;
+        margin-bottom: 18px;
+    }
+
+        .home-hero h1 span {
+            color: #ff7900;
+            font-style: italic;
+        }
+
+    .home-hero p {
+        color: rgba(255,255,255,0.76);
+        font-size: 16px;
+        line-height: 1.72;
+        max-width: 540px;
+        margin-bottom: 28px;
+    }
+
+    .home-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+    }
+
+    .home-btn-primary,
+    .home-btn-secondary {
+        min-width: 165px;
+        min-height: 52px;
+        padding: 14px 24px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 900;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: 0.25s ease;
+    }
+
+    .home-btn-primary {
+        background: #ff7900;
+        color: #ffffff;
+        box-shadow: 0 16px 30px rgba(255,121,0,0.26);
+    }
+
+        .home-btn-primary:hover {
+            color: #ffffff;
+            background: #e96f00;
+            transform: translateY(-2px);
+        }
+
+    .home-btn-secondary {
+        color: #ffffff;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.24);
+    }
+
+        .home-btn-secondary:hover {
+            color: #ffffff;
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+        }
+
+    .home-quick-features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        max-width: 720px;
+    }
+
+    .home-quick-item {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        border-right: 1px solid rgba(255,255,255,0.18);
+        padding-right: 14px;
+    }
+
+        .home-quick-item:last-child {
+            border-right: none;
+        }
+
+    .home-quick-icon {
+        color: #ff7900;
+        font-size: 18px;
+        line-height: 1;
+        margin-top: 2px;
+    }
+
+    .home-quick-item h6 {
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 900;
+        margin: 0 0 4px;
+    }
+
+    .home-quick-item p {
+        color: rgba(255,255,255,0.62);
+        font-size: 12px;
+        line-height: 1.45;
+        margin: 0;
+    }
+
+    .home-video-card {
+        background: rgba(11,16,22,0.76);
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 22px;
+        padding: 18px;
+        box-shadow: 0 24px 60px rgba(0,0,0,0.36);
+        backdrop-filter: blur(16px);
+    }
+
+    .home-video-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+        .home-video-top h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 900;
+            margin: 0;
+        }
+
+    .home-video-tag {
+        color: #78d27b;
+        background: rgba(120,210,123,0.12);
+        border: 1px solid rgba(120,210,123,0.28);
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .home-video-box {
+        height: 245px;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        background: #05080b;
+        border: 1px solid rgba(255,255,255,0.12);
+    }
+
+        .home-video-box video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            background: #05080b;
+        }
+
+    .home-video-steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+        .home-video-steps span {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: rgba(255,255,255,0.78);
+            border-radius: 12px;
+            padding: 9px 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+    .home-stats {
+        position: relative;
+        z-index: 4;
+        margin-top: -82px;
+    }
+
+    .home-stat-panel {
+        background: rgba(13,18,24,0.92);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 24px;
+        box-shadow: 0 22px 50px rgba(0,0,0,0.28);
+        backdrop-filter: blur(14px);
+        padding: 26px 28px;
+    }
+
+    .home-stat-card {
+        height: 100%;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        border-right: 1px solid rgba(255,255,255,0.12);
+        padding: 6px 20px;
+    }
+
+        .home-stat-card.last-stat {
+            border-right: none;
+        }
+
+    .home-stat-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255,121,0,0.12);
+        color: #ff7900;
+        border: 1px solid rgba(255,121,0,0.22);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    .home-stat-card h3 {
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 900;
+        margin: 0 0 3px;
+    }
+
+    .home-stat-card p {
+        color: rgba(255,255,255,0.62);
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .home-section {
+        padding: 72px 0;
+        background: #070b0f;
+    }
+
+    .home-title {
+        text-align: center;
+        margin: 0 auto 38px;
+        max-width: 720px;
+    }
+
+        .home-title span {
+            color: #ff7900;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .home-title h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            color: #ffffff;
+            font-size: 34px;
+            font-weight: 500;
+            margin: 9px 0 10px;
+        }
+
+        .home-title p {
+            color: rgba(255,255,255,0.62);
+            line-height: 1.65;
+            font-size: 15px;
+            margin: 0;
+        }
+
+    .home-feature-card {
+        background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.035));
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 20px;
+        padding: 24px;
+        height: 100%;
+        transition: 0.25s ease;
+    }
+
+        .home-feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,121,0,0.34);
+            box-shadow: 0 20px 44px rgba(0,0,0,0.22);
+        }
+
+    .home-feature-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(255,121,0,0.12);
+        color: #ff7900;
+        border: 1px solid rgba(255,121,0,0.22);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 18px;
+    }
+
+    .home-feature-card h3 {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 900;
+        margin-bottom: 10px;
+    }
+
+    .home-feature-card p {
+        color: rgba(255,255,255,0.62);
+        line-height: 1.62;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .home-workflow {
+        background: linear-gradient(rgba(7,11,15,0.92), rgba(7,11,15,0.96)), url("https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1600&q=80");
+        background-size: cover;
+        background-position: center;
+    }
+
+    .home-step {
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 18px;
+        padding: 22px;
+        height: 100%;
+        backdrop-filter: blur(10px);
+    }
+
+    .home-step-number {
+        width: 40px;
+        height: 40px;
+        background: #ff7900;
+        color: #ffffff;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        margin-bottom: 14px;
+    }
+
+    .home-step h4 {
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 900;
+        margin-bottom: 8px;
+    }
+
+    .home-step p {
+        color: rgba(255,255,255,0.62);
+        line-height: 1.55;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .home-cta {
+        max-width: 900px;
+        margin: auto;
+        background: linear-gradient(135deg, rgba(255,121,0,0.18), rgba(255,255,255,0.06));
+        border: 1px solid rgba(255,255,255,0.13);
+        border-radius: 24px;
+        padding: 38px;
+        text-align: center;
+        box-shadow: 0 24px 54px rgba(0,0,0,0.25);
+    }
+
+        .home-cta h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .home-cta p {
+            color: rgba(255,255,255,0.66);
+            max-width: 620px;
+            margin: 0 auto 22px;
+            line-height: 1.65;
+            font-size: 15px;
+        }
+
+    .home-footer {
+        background: #05080b;
+        color: rgba(255,255,255,0.58);
+        text-align: center;
+        padding: 20px;
+        font-size: 13px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    @@media screen and (max-width: 1200px) {
+        .home-hero-layout {
+            grid-template-columns: 1fr 390px;
+            gap: 30px;
+        }
+
+        .home-hero h1 {
+            font-size: 46px;
+        }
+    }
+
+    @@media screen and (max-width: 991px) {
+        .home-hero {
+            min-height: auto;
+            padding: 52px 0 110px;
+        }
+
+        .home-hero-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .home-video-card {
+            max-width: 440px;
+        }
+
+        .home-quick-features {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .home-stat-card {
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+        }
+
+            .home-stat-card.last-stat {
+                border-bottom: none;
+            }
+    }
+
+    @@media screen and (max-width: 768px) {
+        .navbar-brand {
+            font-size: 22px !important;
+        }
+
+        .home-hero {
+            padding: 42px 0 92px;
+        }
+
+            .home-hero h1 {
+                font-size: 34px;
+            }
+
+            .home-hero p {
+                font-size: 15px;
+            }
+
+        .home-btn-primary,
+        .home-btn-secondary {
+            width: 100%;
+        }
+
+        .home-quick-features {
+            grid-template-columns: 1fr;
+        }
+
+        .home-quick-item {
+            border-right: none;
+        }
+
+        .home-stats {
+            margin-top: -58px;
+        }
+
+        .home-section {
+            padding: 56px 0;
+        }
+
+        .home-title h2 {
+            font-size: 28px;
+        }
+    }
+</style>
+
+<div class="home-page">
+
+    <section class="home-hero">
+        <div class="container">
+            <div class="home-hero-layout">
+
+                <div class="home-hero-box">
+
+                    @if (!string.IsNullOrWhiteSpace(userName))
+                    {
+                        <span class="home-badge">✦ Welcome back, @userName</span>
+                    }
+                    else
+                    {
+                        <span class="home-badge">✦ AR Interior Design Platform</span>
+                    }
+
+                    <h1>
+                        Create Better Rooms with <span>AR Design Tools</span>
+                    </h1>
+
+                    <p>
+                        Upload your room, place furniture, adjust layouts and save
+                        professional interior previews with an easy AR-based workflow.
+                    </p>
+
+                    <div class="home-actions">
+                        <a href="/Home/ARView" class="home-btn-primary">✦ Start AR Studio</a>
+                        <a href="/Home/Furniture" class="home-btn-secondary">▱ Explore Furniture</a>
+                    </div>
+
+                    <div class="home-quick-features">
+                        <div class="home-quick-item">
+                            <div class="home-quick-icon">⌾</div>
+                            <div>
+                                <h6>Room Upload</h6>
+                                <p>Use photo or camera</p>
+                            </div>
+                        </div>
+
+                        <div class="home-quick-item">
+                            <div class="home-quick-icon">⌁</div>
+                            <div>
+                                <h6>Place Furniture</h6>
+                                <p>Move and resize items</p>
+                            </div>
+                        </div>
+
+                        <div class="home-quick-item">
+                            <div class="home-quick-icon">▤</div>
+                            <div>
+                                <h6>Save Preview</h6>
+                                <p>Store final design</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="home-video-card">
+                    <div class="home-video-top">
+                        <h3>How to Use This App</h3>
+                        <span class="home-video-tag">● Demo Video</span>
+                    </div>
+
+                    <div class="home-video-box">
+                        <video controls preload="metadata">
+                            <source src="/videos/ar_actual_recording_professional_female_voice.mp4" type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+
+                    <div class="home-video-steps">
+                        <span>1. Upload</span>
+                        <span>2. Design</span>
+                        <span>3. Save</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="home-stats">
+        <div class="container">
+            <div class="home-stat-panel">
+                <div class="row g-3">
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="home-stat-card">
+                            <div class="home-stat-icon">⌂</div>
+                            <div>
+                                <h3>@(ViewBag.TotalUploads ?? 0)+</h3>
+                                <p>Saved Designs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="home-stat-card">
+                            <div class="home-stat-icon">▱</div>
+                            <div>
+                                <h3>@(ViewBag.TotalFurniture ?? 0)+</h3>
+                                <p>Furniture Items</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="home-stat-card">
+                            <div class="home-stat-icon">◉</div>
+                            <div>
+                                <h3>@(ViewBag.TotalUsers ?? 0)+</h3>
+                                <p>Registered Users</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <div class="home-stat-card last-stat">
+                            <div class="home-stat-icon">☆</div>
+                            <div>
+                                <h3>3</h3>
+                                <p>AR Options</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="container">
+
+            <div class="home-title">
+                <span>What We Offer</span>
+                <h2>Powerful Tools for Modern Interior Design</h2>
+                <p>
+                    A complete interior design platform with room upload, furniture placement,
+                    AI guidance, saved previews and secure admin monitoring.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-feature-card">
+                        <div class="home-feature-icon">⌂</div>
+                        <h3>Room Upload</h3>
+                        <p>Upload or capture your room photo and start designing instantly.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-feature-card">
+                        <div class="home-feature-icon">▣</div>
+                        <h3>AR Room Preview</h3>
+                        <p>Place furniture over the room image and adjust layout easily.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-feature-card">
+                        <div class="home-feature-icon">⌁</div>
+                        <h3>Smart Layouts</h3>
+                        <p>Use AI style suggestions and apply recommended room plans.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-feature-card">
+                        <div class="home-feature-icon">▤</div>
+                        <h3>Save Designs</h3>
+                        <p>Download previews or save them directly in the admin dashboard.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="home-section home-workflow">
+        <div class="container">
+
+            <div class="home-title">
+                <span>Workflow</span>
+                <h2>How The Application Works</h2>
+                <p>
+                    A practical demonstration flow for your AR based interior design final project.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-step">
+                        <div class="home-step-number">1</div>
+                        <h4>Select Furniture</h4>
+                        <p>User explores furniture and selects items for AR preview.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-step">
+                        <div class="home-step-number">2</div>
+                        <h4>Upload Room</h4>
+                        <p>User uploads or captures the room image through camera.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-step">
+                        <div class="home-step-number">3</div>
+                        <h4>Design Layout</h4>
+                        <p>User moves, resizes, rotates and arranges furniture.</p>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="home-step">
+                        <div class="home-step-number">4</div>
+                        <h4>Save Preview</h4>
+                        <p>Final design can be downloaded or stored in database.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="home-section">
+        <div class="container">
+            <div class="home-cta">
+                <h2>Ready to Create Your Interior Preview?</h2>
+                <p>
+                    Open the AR Studio and design a professional room preview using
+                    your own room image and selected furniture items.
+                </p>
+                <a href="/Home/ARView" class="home-btn-primary">Open AR Studio</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="home-footer">
+        © 2026 AR Based Interior Design App. All Rights Reserved.
+    </footer>
+
+</div>

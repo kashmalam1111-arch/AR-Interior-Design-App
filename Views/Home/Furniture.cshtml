@@ -1,0 +1,417 @@
+﻿@model List<ARInteriorDesignApp.Models.Furniture>
+@using System
+
+@{
+    var totalItems = Model?.Count ?? 0;
+}
+
+<style>
+    .furn-page {
+        background: #f4f1ec;
+        color: #20242a;
+        font-family: Arial, sans-serif;
+    }
+
+    .furn-hero {
+        background: linear-gradient(rgba(20, 24, 30, 0.76), rgba(20, 24, 30, 0.76)), url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1600&q=80");
+        background-size: cover;
+        background-position: center;
+        padding: 95px 0;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .furn-badge {
+        display: inline-block;
+        background: rgba(255, 121, 0, 0.18);
+        border: 1px solid rgba(255, 121, 0, 0.45);
+        color: #ffb26b;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 900;
+        margin-bottom: 16px;
+    }
+
+    .furn-hero h1 {
+        font-size: 52px;
+        font-weight: 900;
+        margin-bottom: 14px;
+    }
+
+    .furn-hero p {
+        max-width: 700px;
+        margin: auto;
+        font-size: 17px;
+        color: rgba(255,255,255,0.82);
+        line-height: 1.7;
+    }
+
+    .furn-wrapper {
+        padding: 55px 0 75px;
+    }
+
+    .furn-toolbar {
+        background: #fffaf3;
+        border: 1px solid #e5d8c8;
+        border-radius: 24px;
+        padding: 18px;
+        box-shadow: 0 14px 34px rgba(32,36,42,0.06);
+        margin-bottom: 24px;
+    }
+
+    .furn-search {
+        height: 52px;
+        border-radius: 16px;
+        border: 1px solid #e1d3c2;
+        padding: 0 18px;
+        font-weight: 700;
+        background: #ffffff;
+    }
+
+        .furn-search:focus {
+            border-color: #ff7900;
+            box-shadow: 0 0 0 0.2rem rgba(255,121,0,0.12);
+        }
+
+    .furn-filter-box {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 28px 0 34px;
+    }
+
+    .furn-filter-btn {
+        border: 1px solid #ddcdbc;
+        background: #fffaf3;
+        color: #20242a;
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-weight: 900;
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+        .furn-filter-btn:hover,
+        .furn-filter-btn.active {
+            background: #ff7900;
+            color: #ffffff;
+            border-color: #ff7900;
+            box-shadow: 0 10px 22px rgba(255,121,0,0.22);
+        }
+
+    .furn-top-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+        .furn-top-info h2 {
+            font-size: 28px;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .furn-top-info p {
+            margin: 0;
+            color: #68717b;
+            font-weight: 700;
+        }
+
+    .furn-card {
+        background: #fffaf3;
+        border: 1px solid #e5d8c8;
+        border-radius: 24px;
+        overflow: hidden;
+        height: 100%;
+        box-shadow: 0 14px 34px rgba(32,36,42,0.06);
+        transition: 0.25s ease;
+    }
+
+        .furn-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 42px rgba(32,36,42,0.10);
+        }
+
+    .furn-img-box {
+        height: 210px;
+        background: #e8ddcf;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .furn-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: 0.3s ease;
+        }
+
+    .furn-card:hover .furn-img-box img {
+        transform: scale(1.05);
+    }
+
+    .furn-category {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: #fff0df;
+        color: #b45f07;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .furn-body {
+        padding: 18px;
+    }
+
+        .furn-body h5 {
+            font-size: 19px;
+            font-weight: 900;
+            color: #20242a;
+            margin-bottom: 8px;
+        }
+
+    .furn-desc {
+        color: #68717b;
+        font-size: 13px;
+        line-height: 1.55;
+        min-height: 62px;
+        margin-bottom: 14px;
+    }
+
+    .furn-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .furn-price {
+        color: #ff7900;
+        font-weight: 900;
+        font-size: 20px;
+    }
+
+    .furn-featured {
+        background: #eef7ec;
+        color: #2f8d3a;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .furn-btn {
+        background: #ff7900;
+        color: #ffffff;
+        text-decoration: none;
+        border-radius: 14px;
+        padding: 11px 16px;
+        display: block;
+        text-align: center;
+        font-weight: 900;
+        box-shadow: 0 10px 20px rgba(255,121,0,0.20);
+    }
+
+        .furn-btn:hover {
+            color: #ffffff;
+            background: #e86f00;
+        }
+
+    .furn-empty {
+        background: #fffaf3;
+        border: 1px solid #e5d8c8;
+        border-radius: 24px;
+        padding: 38px;
+        text-align: center;
+        box-shadow: 0 14px 34px rgba(32,36,42,0.06);
+    }
+
+        .furn-empty h4 {
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .furn-empty p {
+            color: #68717b;
+            margin: 0;
+        }
+
+    .furn-footer {
+        background: #171b21;
+        color: rgba(255,255,255,0.70);
+        text-align: center;
+        padding: 22px;
+        font-size: 14px;
+    }
+
+    @@media screen and (max-width: 768px) {
+        .furn-hero h1 {
+            font-size: 36px;
+        }
+
+        .furn-img-box {
+            height: 230px;
+        }
+    }
+</style>
+
+<div class="furn-page">
+
+    <section class="furn-hero">
+        <div class="container">
+            <span class="furn-badge">Premium Collection</span>
+
+            <h1>Furniture Gallery</h1>
+
+            <p>
+                Explore modern furniture items and add them directly inside your room
+                using AR based interior design visualization.
+            </p>
+        </div>
+    </section>
+
+    <section class="furn-wrapper">
+        <div class="container">
+
+            <div class="furn-toolbar">
+                <input type="text"
+                       id="furnitureSearch"
+                       class="form-control furn-search"
+                       placeholder="Search furniture item..."
+                       onkeyup="searchFurniture()" />
+            </div>
+
+            <div class="furn-filter-box">
+                <button class="furn-filter-btn active" onclick="filterFurniture('all', this)">All</button>
+                <button class="furn-filter-btn" onclick="filterFurniture('sofa', this)">Sofa</button>
+                <button class="furn-filter-btn" onclick="filterFurniture('chair', this)">Chair</button>
+                <button class="furn-filter-btn" onclick="filterFurniture('table', this)">Table</button>
+                <button class="furn-filter-btn" onclick="filterFurniture('bed', this)">Bed</button>
+                <button class="furn-filter-btn" onclick="filterFurniture('storage', this)">Storage</button>
+                <button class="furn-filter-btn" onclick="filterFurniture('decor', this)">Decor</button>
+            </div>
+
+            <div class="furn-top-info">
+                <div>
+                    <h2>Explore Furniture</h2>
+                    <p>@totalItems items available for room placement</p>
+                </div>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="row g-4" id="furnitureList">
+
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-xl-3 col-lg-4 col-md-6 furniture-item"
+                             data-category="@((item.Category?.Name ?? "other").ToLower())"
+                             data-name="@item.Name.ToLower()">
+
+                            <div class="furn-card">
+
+                                <div class="furn-img-box">
+                                    <img src="@item.ImageUrl" alt="@item.Name" />
+
+                                    <span class="furn-category">
+                                        @(item.Category?.Name ?? "Furniture")
+                                    </span>
+                                </div>
+
+                                <div class="furn-body">
+                                    <h5>@item.Name</h5>
+
+                                    <p class="furn-desc">
+                                        @item.Description
+                                    </p>
+
+                                    <div class="furn-meta">
+                                        <span class="furn-featured">AR Ready</span>
+
+                                        @if (item.IsFeatured)
+                                        {
+                                            <span class="furn-featured">Featured</span>
+                                        }
+                                    </div>
+
+                                    <a href="/Home/ARView?arName=@Uri.EscapeDataString(item.Name ?? "Furniture")&arImage=@Uri.EscapeDataString(item.ImageUrl ?? "")"
+                                       class="furn-btn">
+                                        Add to Room
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="furn-empty">
+                    <h4>No furniture items found</h4>
+                    <p>Please add furniture records from database seeding or admin panel.</p>
+                </div>
+            }
+
+        </div>
+    </section>
+
+    <footer class="furn-footer">
+        © 2026 AR Based Interior Design App. All Rights Reserved.
+    </footer>
+
+</div>
+
+<script>
+    function filterFurniture(category, button) {
+        let items = document.querySelectorAll(".furniture-item");
+        let buttons = document.querySelectorAll(".furn-filter-btn");
+
+        buttons.forEach(function (btn) {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        document.getElementById("furnitureSearch").value = "";
+
+        items.forEach(function (item) {
+            let itemCategory = item.getAttribute("data-category");
+
+            if (category === "all" || itemCategory === category) {
+                item.style.display = "block";
+            }
+            else {
+                item.style.display = "none";
+            }
+        });
+    }
+
+    function searchFurniture() {
+        let searchValue = document.getElementById("furnitureSearch").value.toLowerCase();
+        let items = document.querySelectorAll(".furniture-item");
+
+        items.forEach(function (item) {
+            let itemName = item.getAttribute("data-name");
+
+            if (itemName.includes(searchValue)) {
+                item.style.display = "block";
+            }
+            else {
+                item.style.display = "none";
+            }
+        });
+    }
+</script>
